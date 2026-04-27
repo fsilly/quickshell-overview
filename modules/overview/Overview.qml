@@ -20,7 +20,7 @@ Scope {
             readonly property HyprlandMonitor monitor: Hyprland.monitorFor(root.screen)
             property bool monitorIsFocused: (Hyprland.focusedMonitor?.id == monitor?.id)
             screen: modelData
-            visible: GlobalStates.overviewOpen
+            visible: GlobalStates.overviewOpen && monitorIsFocused
 
             WlrLayershell.namespace: "quickshell:overview"
             WlrLayershell.layer: WlrLayer.Overlay
@@ -79,26 +79,44 @@ Scope {
                 focus: GlobalStates.overviewOpen
 
                 Keys.onPressed: event => {
-                    if (event.key === Qt.Key_Escape) {
+                    if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         GlobalStates.overviewOpen = false;
                         event.accepted = true;
-                    } else if (event.key === Qt.Key_Left || event.key === Qt.Key_Right) {
-                        const workspacesPerGroup = Config.options.overview.rows * Config.options.overview.columns;
-                        const currentId = Hyprland.focusedMonitor?.activeWorkspace?.id ?? 1;
-                        const currentGroup = Math.floor((currentId - 1) / workspacesPerGroup);
-                        const minWorkspaceId = currentGroup * workspacesPerGroup + 1;
-                        const maxWorkspaceId = minWorkspaceId + workspacesPerGroup - 1;
+                    } else if (event.key === Qt.Key_Left || event.key === Qt.Key_Right || event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
+                        const activeWs = HyprlandData.activeWorkspace;
+                        if (!activeWs) return;
                         
-                        let targetId;
+                        const name = activeWs.name;
+                        const match = name.match(/\((\d+) (\d+)\)/);
+                        if (!match) return;
+                        
+                        let col = parseInt(match[1]);
+                        let row = parseInt(match[2]);
+                        
+                        const monitor = HyprlandData.monitors.find(m => m.focused);
+                        const activity = monitor?.activities?.find(a => a.focused);
+                        if (!activity || !activity.workspaces || activity.workspaces.length === 0) return;
+                        
+                        const rows = activity.workspaces.length;
+                        const cols = activity.workspaces[0].length;
+                        
                         if (event.key === Qt.Key_Left) {
-                            targetId = currentId - 1;
-                            if (targetId < minWorkspaceId) targetId = maxWorkspaceId;
-                        } else {
-                            targetId = currentId + 1;
-                            if (targetId > maxWorkspaceId) targetId = minWorkspaceId;
+                            col--;
+                            if (col < 1) col = cols;
+                        } else if (event.key === Qt.Key_Right) {
+                            col++;
+                            if (col > cols) col = 1;
+                        } else if (event.key === Qt.Key_Up) {
+                            row--;
+                            if (row < 1) row = rows;
+                        } else if (event.key === Qt.Key_Down) {
+                            row++;
+                            if (row > rows) row = 1;
                         }
                         
-                        Hyprland.dispatch("workspace " + targetId);
+                        const newName = `${activity.name}:(${col} ${row})`;
+                        
+                        Hyprland.dispatch(`exec hyprkool switch-to-workspace --name "${newName}"`);
                         event.accepted = true;
                     }
                 }

@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 //@ pragma Env QT_QUICK_CONTROLS_STYLE=Basic
+//@ pragma Env QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 
 import "./modules/overview/"
 import "./services/"

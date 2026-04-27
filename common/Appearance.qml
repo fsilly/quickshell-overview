@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import "functions"
 
 Singleton {
@@ -15,31 +16,33 @@ Singleton {
     property QtObject font
     property QtObject sizes
 
+    property var loadedColors: null
+
     m3colors: QtObject {
-        property bool darkmode: true
-        property color m3primary: "#E5B6F2"
-        property color m3onPrimary: "#452152"
-        property color m3primaryContainer: "#5D386A"
-        property color m3onPrimaryContainer: "#F9D8FF"
-        property color m3secondary: "#D5C0D7"
-        property color m3onSecondary: "#392C3D"
-        property color m3secondaryContainer: "#534457"
-        property color m3onSecondaryContainer: "#F2DCF3"
-        property color m3background: "#161217"
-        property color m3onBackground: "#EAE0E7"
-        property color m3surface: "#161217"
-        property color m3surfaceContainerLow: "#1F1A1F"
-        property color m3surfaceContainer: "#231E23"
-        property color m3surfaceContainerHigh: "#2D282E"
-        property color m3surfaceContainerHighest: "#383339"
-        property color m3onSurface: "#EAE0E7"
-        property color m3surfaceVariant: "#4C444D"
-        property color m3onSurfaceVariant: "#CFC3CD"
-        property color m3inverseSurface: "#EAE0E7"
-        property color m3inverseOnSurface: "#342F34"
-        property color m3outline: "#988E97"
-        property color m3outlineVariant: "#4C444D"
-        property color m3shadow: "#000000"
+        property bool darkmode: root.loadedColors ? (root.loadedColors.mode === "dark") : true
+        property color m3primary: root.loadedColors ? "#" + root.loadedColors.colours.primary : "#E5B6F2"
+        property color m3onPrimary: root.loadedColors ? "#" + root.loadedColors.colours.onPrimary : "#452152"
+        property color m3primaryContainer: root.loadedColors ? "#" + root.loadedColors.colours.primaryContainer : "#5D386A"
+        property color m3onPrimaryContainer: root.loadedColors ? "#" + root.loadedColors.colours.onPrimaryContainer : "#F9D8FF"
+        property color m3secondary: root.loadedColors ? "#" + root.loadedColors.colours.secondary : "#D5C0D7"
+        property color m3onSecondary: root.loadedColors ? "#" + root.loadedColors.colours.onSecondary : "#392C3D"
+        property color m3secondaryContainer: root.loadedColors ? "#" + root.loadedColors.colours.secondaryContainer : "#534457"
+        property color m3onSecondaryContainer: root.loadedColors ? "#" + root.loadedColors.colours.onSecondaryContainer : "#F2DCF3"
+        property color m3background: root.loadedColors ? "#" + root.loadedColors.colours.background : "#161217"
+        property color m3onBackground: root.loadedColors ? "#" + root.loadedColors.colours.onBackground : "#EAE0E7"
+        property color m3surface: root.loadedColors ? "#" + root.loadedColors.colours.surface : "#161217"
+        property color m3surfaceContainerLow: root.loadedColors ? "#" + root.loadedColors.colours.surfaceContainerLow : "#1F1A1F"
+        property color m3surfaceContainer: root.loadedColors ? "#" + root.loadedColors.colours.surfaceContainer : "#231E23"
+        property color m3surfaceContainerHigh: root.loadedColors ? "#" + root.loadedColors.colours.surfaceContainerHigh : "#2D282E"
+        property color m3surfaceContainerHighest: root.loadedColors ? "#" + root.loadedColors.colours.surfaceContainerHighest : "#383339"
+        property color m3onSurface: root.loadedColors ? "#" + root.loadedColors.colours.onSurface : "#EAE0E7"
+        property color m3surfaceVariant: root.loadedColors ? "#" + root.loadedColors.colours.surfaceVariant : "#4C444D"
+        property color m3onSurfaceVariant: root.loadedColors ? "#" + root.loadedColors.colours.onSurfaceVariant : "#CFC3CD"
+        property color m3inverseSurface: root.loadedColors ? "#" + root.loadedColors.colours.inverseSurface : "#EAE0E7"
+        property color m3inverseOnSurface: root.loadedColors ? "#" + root.loadedColors.colours.inverseOnSurface : "#342F34"
+        property color m3outline: root.loadedColors ? "#" + root.loadedColors.colours.outline : "#988E97"
+        property color m3outlineVariant: root.loadedColors ? "#" + root.loadedColors.colours.outlineVariant : "#4C444D"
+        property color m3shadow: root.loadedColors ? "#" + root.loadedColors.colours.shadow : "#000000"
     }
 
     colors: QtObject {
@@ -144,5 +147,19 @@ Singleton {
 
     sizes: QtObject {
         property real elevationMargin: 10
+    }
+
+    FileView {
+        id: schemeFile
+        path: Config.options.overview.scheme_path
+        watchChanges: true
+        onLoaded: {
+            try {
+                root.loadedColors = JSON.parse(text())
+            } catch (e) {
+                console.error("Failed to parse scheme json:", e)
+            }
+        }
+        onFileChanged: reload()
     }
 }

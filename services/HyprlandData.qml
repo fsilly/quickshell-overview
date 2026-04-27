@@ -14,45 +14,90 @@ Singleton {
     property var windowList: []
     property var addresses: []
     property var windowByAddress: ({})
-    property var workspaces: []
-    property var workspaceIds: []
-    property var workspaceById: ({})
     property var activeWorkspace: null
     property var monitors: []
+    property var monitorGeometries: []
     property var layers: ({})
+    
+    property var _rawHyprkoolData: null
+    property var _rawClientsData: null
 
-    function updateWindowList() {
+    function updateHyprkoolData() {
+        getHyprkoolData.running = true;
+    }
+
+    function updateClients() {
         getClients.running = true;
+    }
+
+    function updateMonitorGeometries() {
+        getMonitorGeometries.running = true;
     }
 
     function updateLayers() {
         getLayers.running = true;
     }
 
-    function updateMonitors() {
-        getMonitors.running = true;
-    }
-
-    function updateWorkspaces() {
-        getWorkspaces.running = true;
-        getActiveWorkspace.running = true;
-    }
-
     function updateAll() {
-        updateWindowList();
-        updateMonitors();
+        updateHyprkoolData();
+        updateClients();
+        updateMonitorGeometries();
         updateLayers();
-        updateWorkspaces();
     }
 
-    function biggestWindowForWorkspace(workspaceId) {
-        const windowsInThisWorkspace = HyprlandData.windowList.filter(w => w.workspace.id == workspaceId);
-        return windowsInThisWorkspace.reduce((maxWin, win) => {
-            const maxArea = (maxWin?.size?.[0] ?? 0) * (maxWin?.size?.[1] ?? 0);
-            const winArea = (win?.size?.[0] ?? 0) * (win?.size?.[1] ?? 0);
-            return winArea > maxArea ? win : maxWin;
-        }, null);
+    function rebuildData() {
+        if (!_rawHyprkoolData || !_rawClientsData) return;
+        
+        // Create a map of clients for fast lookup
+        var clientsMap = {};
+        _rawClientsData.forEach(c => {
+            clientsMap[c.address] = c;
+        });
+
+        var data = _rawHyprkoolData;
+        root.monitors = data;
+        
+        var wins = [];
+        var winByAddr = {};
+        var addrs = [];
+        var activeWs = null;
+        
+        data.forEach(monitor => {
+            monitor.activities.forEach(activity => {
+                activity.workspaces.forEach(row => {
+                    row.forEach(workspace => {
+                        if (monitor.focused && activity.focused && workspace.focused) {
+                            activeWs = workspace;
+                        }
+                        workspace.windows.forEach(win => {
+                            // Merge with client data
+                            var clientData = clientsMap[win.address];
+                            if (clientData) {
+                                win.at = clientData.at;
+                                win.size = clientData.size;
+                                win.xwayland = clientData.xwayland;
+                                win.pinned = clientData.pinned;
+                                win.floating = clientData.floating;
+                                // win.monitor is set below from the structure
+                            }
+                            
+                            win.workspace = workspace;
+                            win.monitor = monitor.id;
+                            wins.push(win);
+                            winByAddr[win.address] = win;
+                            addrs.push(win.address);
+                        });
+                    });
+                });
+            });
+        });
+        
+        root.windowList = wins;
+        root.windowByAddress = winByAddr;
+        root.addresses = addrs;
+        root.activeWorkspace = activeWs;
     }
+
 
     Component.onCompleted: {
         updateAll();
@@ -67,30 +112,25 @@ Singleton {
     }
 
     Process {
-        id: getClients
-        command: ["hyprctl", "clients", "-j"]
+        id: getHyprkoolData
+        command: ["hyprkool", "info", "monitors-all-info"]
         stdout: StdioCollector {
-            id: clientsCollector
+            id: hyprkoolCollector
             onStreamFinished: {
-                root.windowList = JSON.parse(clientsCollector.text)
-                let tempWinByAddress = {};
-                for (var i = 0; i < root.windowList.length; ++i) {
-                    var win = root.windowList[i];
-                    tempWinByAddress[win.address] = win;
-                }
-                root.windowByAddress = tempWinByAddress;
-                root.addresses = root.windowList.map(win => win.address);
+                root._rawHyprkoolData = JSON.parse(hyprkoolCollector.text);
+                root.rebuildData();
             }
         }
     }
 
     Process {
-        id: getMonitors
-        command: ["hyprctl", "monitors", "-j"]
+        id: getClients
+        command: ["hyprctl", "clients", "-j"]
         stdout: StdioCollector {
-            id: monitorsCollector
+            id: clientsCollector
             onStreamFinished: {
-                root.monitors = JSON.parse(monitorsCollector.text);
+                root._rawClientsData = JSON.parse(clientsCollector.text);
+                root.rebuildData();
             }
         }
     }
@@ -107,31 +147,15 @@ Singleton {
     }
 
     Process {
-        id: getWorkspaces
-        command: ["hyprctl", "workspaces", "-j"]
+        id: getMonitorGeometries
+        command: ["hyprctl", "monitors", "-j"]
         stdout: StdioCollector {
-            id: workspacesCollector
+            id: monitorGeometriesCollector
             onStreamFinished: {
-                root.workspaces = JSON.parse(workspacesCollector.text);
-                let tempWorkspaceById = {};
-                for (var i = 0; i < root.workspaces.length; ++i) {
-                    var ws = root.workspaces[i];
-                    tempWorkspaceById[ws.id] = ws;
-                }
-                root.workspaceById = tempWorkspaceById;
-                root.workspaceIds = root.workspaces.map(ws => ws.id);
+                root.monitorGeometries = JSON.parse(monitorGeometriesCollector.text);
             }
         }
     }
 
-    Process {
-        id: getActiveWorkspace
-        command: ["hyprctl", "activeworkspace", "-j"]
-        stdout: StdioCollector {
-            id: activeWorkspaceCollector
-            onStreamFinished: {
-                root.activeWorkspace = JSON.parse(activeWorkspaceCollector.text);
-            }
-        }
-    }
+
 }

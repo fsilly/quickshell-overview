@@ -136,7 +136,7 @@ Item { // Window
 //<<<<<<< HEAD
     width: Math.min((windowData?.size?.[0] ?? 100) * root.scale, availableWorkspaceWidth)
     height: Math.min((windowData?.size?.[1] ?? 100) * root.scale, availableWorkspaceHeight)
-    opacity: 1
+//    opacity: 1
 //=======
 //    width: Math.min(targetWindowWidth, availableWorkspaceWidth)
 //    height: Math.min(targetWindowHeight, availableWorkspaceHeight)
@@ -186,8 +186,8 @@ Item { // Window
             visible: Config.options.overview.blur_strength > 0
         }
 //=======
-        captureSource: shouldCapturePreview ? root.toplevel : null
-        live: livePreviewEnabled
+//        captureSource: shouldCapturePreview ? root.toplevel : null
+//        live: livePreviewEnabled
 //>>>>>>> main
 
         Rectangle {

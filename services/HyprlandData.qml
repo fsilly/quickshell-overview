@@ -15,28 +15,28 @@ Singleton {
     property var windowList: []
     property var addresses: []
     property var windowByAddress: ({})
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
     property var workspaces: []
     property var allWorkspaces: []
     property var workspaceIds: []
     property var workspaceById: ({})
->>>>>>> main
+//>>>>>>> main
     property var activeWorkspace: null
     property var monitors: []
     property var monitorGeometries: []
     property var layers: ({})
-<<<<<<< HEAD
+//<<<<<<< HEAD
     
     property var _rawHyprkoolData: null
     property var _rawClientsData: null
-=======
+//=======
     property bool pendingWindowsUpdate: false
     property bool pendingMonitorsUpdate: false
     property bool pendingLayersUpdate: false
     property bool pendingWorkspacesUpdate: false
     property bool pendingActiveWorkspaceUpdate: false
->>>>>>> main
+//>>>>>>> main
 
     function updateHyprkoolData() {
         getHyprkoolData.running = true;
@@ -55,12 +55,12 @@ Singleton {
     }
 
     function updateAll() {
-<<<<<<< HEAD
+//<<<<<<< HEAD
         updateHyprkoolData();
         updateClients();
         updateMonitorGeometries();
         updateLayers();
-=======
+//=======
         scheduleUpdates(true, true, true, true, true);
     }
 
@@ -101,7 +101,7 @@ Singleton {
             pendingActiveWorkspaceUpdate = false;
             getActiveWorkspace.running = true;
         }
->>>>>>> main
+//>>>>>>> main
     }
 
     function rebuildData() {
@@ -238,9 +238,9 @@ Singleton {
         stdout: StdioCollector {
             id: monitorGeometriesCollector
             onStreamFinished: {
-<<<<<<< HEAD
+//<<<<<<< HEAD
                 root.monitorGeometries = JSON.parse(monitorGeometriesCollector.text);
-=======
+//=======
                 const rawWorkspaces = JSON.parse(workspacesCollector.text);
                 root.allWorkspaces = rawWorkspaces;
                 root.workspaces = rawWorkspaces.filter(ws => ws.id >= 1 && ws.id <= 100);
@@ -251,7 +251,7 @@ Singleton {
                 }
                 root.workspaceById = tempWorkspaceById;
                 root.workspaceIds = root.workspaces.map(ws => ws.id);
->>>>>>> main
+//>>>>>>> main
             }
         }
     }

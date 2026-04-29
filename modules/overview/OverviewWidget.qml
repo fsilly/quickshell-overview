@@ -461,7 +461,7 @@ Item {
 //                            property color hoveredWorkspaceColor: ColorUtils.transparentize(ColorUtils.mix(Appearance.colors.colLayer1, Appearance.colors.colLayer1Hover, 0.1), 1.0 - Config.options.overview.opacity)
 //                            property color hoveredBorderColor: ColorUtils.transparentize(Appearance.colors.colLayer2Hover, 1.0 - Config.options.overview.opacity)
 // //=======
-                            property int workspaceValue: root.getWorkspaceInCell(rowIndex, colIndex)
+//                            property int workspaceValue: root.getWorkspaceInCell(rowIndex, colIndex)
                             property bool showWallpaper: root.hasEmptyWorkspaceWallpaper
                             property color defaultWorkspaceColor: Appearance.colors.colLayer1
                             property color hoveredWorkspaceColor: ColorUtils.mix(defaultWorkspaceColor, Appearance.colors.colLayer1Hover, 0.1)
@@ -564,9 +564,9 @@ Item {
                                 anchors.fill: parent
                                 onEntered: {
 // //<<<<<<< HEAD
-//                                    root.draggingTargetWorkspace = workspaceName
+                                    root.draggingTargetWorkspace = workspaceName
 // //=======
-                                    root.draggingTargetWorkspace = workspaceValue
+//                                    root.draggingTargetWorkspace = workspaceValue
                                     root.draggingTargetSpecialWorkspace = ""
 // //>>>>>>>> main
                                     if (root.draggingFromWorkspace == root.draggingTargetWorkspace) return;
@@ -1040,7 +1040,7 @@ Item {
                     windowData: windowByAddress[address]
                     toplevel: modelData
 //<<<<<<< HEAD
-                    monitorData: root.monitorData
+//                    monitorData: root.monitorData
                     
                     // Calculate scale relative to window's source monitor
                     property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
@@ -1059,7 +1059,7 @@ Item {
 //=======
                     monitorData: monitor
                     widgetMonitorData: root.monitorData
-                    scale: root.scale
+//                    scale: root.scale
 //>>>>>>>> main
                     availableWorkspaceWidth: root.workspaceImplicitWidth
                     availableWorkspaceHeight: root.workspaceImplicitHeight
@@ -1082,8 +1082,8 @@ Item {
                         return 0;
                     }
 //=======
-                    property int workspaceColIndex: root.getWorkspaceColumn(windowData?.workspace.id)
-                    property int workspaceRowIndex: root.getWorkspaceRow(windowData?.workspace.id)
+//                    property int workspaceColIndex: root.getWorkspaceColumn(windowData?.workspace.id)
+//                    property int workspaceRowIndex: root.getWorkspaceRow(windowData?.workspace.id)
 //>>>>>>>> main
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
@@ -1095,8 +1095,8 @@ Item {
                         running: false
                         onTriggered: {
 //<<<<<<< HEAD
-                            window.x = Math.round(Math.max((windowData?.at?.[0] ?? 0) * root.scale, 0) + xOffset)
-                            window.y = Math.round(Math.max((windowData?.at?.[1] ?? 0) * root.scale, 0) + yOffset)
+//                            window.x = Math.round(Math.max((windowData?.at?.[0] ?? 0) * root.scale, 0) + xOffset)
+//                            window.y = Math.round(Math.max((windowData?.at?.[1] ?? 0) * root.scale, 0) + yOffset)
 //=======
                             window.x = Math.round(Math.max((windowData?.at[0] - (monitor?.x ?? 0) - (monitorData?.reserved?.[0] ?? 0)) * root.scale * window.widthRatio, 0) + xOffset)
                             window.y = Math.round(Math.max((windowData?.at[1] - (monitor?.y ?? 0) - (monitorData?.reserved?.[1] ?? 0)) * root.scale * window.heightRatio, 0) + yOffset)
@@ -1119,7 +1119,7 @@ Item {
 //<<<<<<< HEAD
                             root.draggingFromWorkspace = windowData?.workspace.name
 //=======
-                            root.draggingFromWorkspace = windowData?.workspace.id
+//                            root.draggingFromWorkspace = windowData?.workspace.id
                             root.draggingTargetSpecialWorkspace = ""
 //>>>>>>>> main
                             window.pressed = true
@@ -1138,8 +1138,11 @@ Item {
                             if (targetWorkspace !== "" && targetWorkspace !== windowData?.workspace.name) {
                                 Hyprland.dispatch(`movetoworkspacesilent name:${targetWorkspace}, address:${window.windowData?.address}`)
 //=======
-                            root.draggingFromWorkspace = -1
-                            root.draggingTargetWorkspace = -1
+                            }
+                            root.draggingTargetWorkspace = ""
+//=======
+//                            root.draggingFromWorkspace = -1
+//                            root.draggingTargetWorkspace = -1
                             root.draggingTargetSpecialWorkspace = ""
                             if (targetSpecialWorkspace === root.createSpecialWorkspaceTarget) {
                                 const createdName = root.nextSpecialWorkspaceName()
@@ -1199,8 +1202,8 @@ Item {
                     return 0;
                 }
 //=======
-                property int activeWorkspaceRowIndex: root.getWorkspaceRow(root.effectiveActiveWorkspaceId)
-                property int activeWorkspaceColIndex: root.getWorkspaceColumn(root.effectiveActiveWorkspaceId)
+//                property int activeWorkspaceRowIndex: root.getWorkspaceRow(root.effectiveActiveWorkspaceId)
+//                property int activeWorkspaceColIndex: root.getWorkspaceColumn(root.effectiveActiveWorkspaceId)
 //>>>>>>>> main
                 x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
                 y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex

@@ -1,10 +1,10 @@
 //@ pragma UseQApplication
 //@ pragma Env QT_QUICK_CONTROLS_STYLE=Basic
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //@ pragma Env QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-=======
+//=======
 //@ pragma Env QT_QPA_PLATFORMTHEME=
->>>>>>> main
+//>>>>>>> main
 
 import "./modules/overview/"
 import "./services/"

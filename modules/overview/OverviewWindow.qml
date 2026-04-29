@@ -20,7 +20,7 @@ Item { // Window
     property real positionBaseY: (monitorData?.y ?? 0) + (monitorData?.reserved?.[1] ?? 0)
     property int recaptureToken: 0
     property bool restrictToWorkspace: true
-<<<<<<< HEAD
+//<<<<<<< HEAD
     property var monitorGeometry: HyprlandData.monitorGeometries.find(m => m.id == (windowData?.monitor ?? -1))
     property real monitorX: monitorGeometry?.x ?? 0
     property real monitorY: monitorGeometry?.y ?? 0
@@ -49,9 +49,9 @@ Item { // Window
         return val;
     }
 
-    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
-    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
-=======
+//    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
+//    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
+//=======
     property real widthRatio: {
         if (!widgetMonitorData || !monitorData)
             return 1;
@@ -74,20 +74,20 @@ Item { // Window
     }
     property real initX: Math.max(((windowData?.at[0] ?? 0) - positionBaseX) * root.scale * geometryScaleX, 0) + xOffset
     property real initY: Math.max(((windowData?.at[1] ?? 0) - positionBaseY) * root.scale * geometryScaleY, 0) + yOffset
->>>>>>> main
+//>>>>>>> main
     property real xOffset: 0
     property real yOffset: 0
     property int widgetMonitorId: 0
     property real geometryScaleX: widthRatio
     property real geometryScaleY: heightRatio
     
-<<<<<<< HEAD
-    property var targetWindowWidth: (windowData?.size?.[0] ?? 100) * scale
-    property var targetWindowHeight: (windowData?.size?.[1] ?? 100) * scale
-=======
+//<<<<<<< HEAD
+//    property var targetWindowWidth: (windowData?.size?.[0] ?? 100) * scale
+//    property var targetWindowHeight: (windowData?.size?.[1] ?? 100) * scale
+//=======
     property var targetWindowWidth: (windowData?.size[0] ?? 100) * scale * geometryScaleX
     property var targetWindowHeight: (windowData?.size[1] ?? 100) * scale * geometryScaleY
->>>>>>> main
+//>>>>>>> main
     property bool hovered: false
     property bool pressed: false
 
@@ -133,18 +133,18 @@ Item { // Window
     
     x: initX
     y: initY
-<<<<<<< HEAD
+//<<<<<<< HEAD
     width: Math.min((windowData?.size?.[0] ?? 100) * root.scale, availableWorkspaceWidth)
     height: Math.min((windowData?.size?.[1] ?? 100) * root.scale, availableWorkspaceHeight)
     opacity: 1
-=======
-    width: Math.min(targetWindowWidth, availableWorkspaceWidth)
-    height: Math.min(targetWindowHeight, availableWorkspaceHeight)
+//=======
+//    width: Math.min(targetWindowWidth, availableWorkspaceWidth)
+//    height: Math.min(targetWindowHeight, availableWorkspaceHeight)
     opacity: (windowData?.monitor ?? -1) == widgetMonitorId ? 1 : Config.options.windowPreview.inactiveMonitorOpacity
 
-    clip: true
+//    clip: true
     Component.onCompleted: Qt.callLater(() => root.initialized = true)
->>>>>>> main
+//>>>>>>> main
 
     Behavior on x {
         enabled: root.initialized && !root.dragInProgress && !root.suspendPositionAnimation
@@ -165,7 +165,7 @@ Item { // Window
 
     Rectangle {
         anchors.fill: parent
-<<<<<<< HEAD
+//<<<<<<< HEAD
         radius: Appearance.rounding.windowRounding * root.scale
         clip: true
         color: "transparent"
@@ -185,10 +185,10 @@ Item { // Window
             blur: 1.0
             visible: Config.options.overview.blur_strength > 0
         }
-=======
+//=======
         captureSource: shouldCapturePreview ? root.toplevel : null
         live: livePreviewEnabled
->>>>>>> main
+//>>>>>>> main
 
         Rectangle {
             anchors.fill: parent

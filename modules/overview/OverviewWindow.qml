@@ -147,7 +147,10 @@ Item { // Window
     opacity: (windowData?.monitor ?? -1) == widgetMonitorId ? 1 : Config.options.windowPreview.inactiveMonitorOpacity
 
 //    clip: true
-    Component.onCompleted: Qt.callLater(() => root.initialized = true)
+    Component.onCompleted: {
+        console.log("hello :)")
+        Qt.callLater(() => root.initialized = true)
+    }
 //>>>>>>> main
 
     Behavior on x {

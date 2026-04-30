@@ -61,48 +61,48 @@ Singleton {
         updateMonitorGeometries();
         updateLayers();
 //=======
-        scheduleUpdates(true, true, true, true, true);
+//        scheduleUpdates(true, true, true, true, true);
     }
-
-    function scheduleUpdates(windows, monitors, layers, workspaces, activeWorkspace) {
-        pendingWindowsUpdate = pendingWindowsUpdate || !!windows;
-        pendingMonitorsUpdate = pendingMonitorsUpdate || !!monitors;
-        pendingLayersUpdate = pendingLayersUpdate || !!layers;
-        pendingWorkspacesUpdate = pendingWorkspacesUpdate || !!workspaces;
-        pendingActiveWorkspaceUpdate = pendingActiveWorkspaceUpdate || !!activeWorkspace;
-
-        const debounceMs = Math.max(0, Config.options.hacks.hyprlandEventDebounceMs);
-        if (debounceMs === 0) {
-            flushPendingUpdates();
-        } else {
-            eventDebounceTimer.interval = debounceMs;
-            eventDebounceTimer.restart();
-        }
-    }
-
-    function flushPendingUpdates() {
-        if (pendingWindowsUpdate) {
-            pendingWindowsUpdate = false;
-            updateWindowList();
-        }
-        if (pendingMonitorsUpdate) {
-            pendingMonitorsUpdate = false;
-            updateMonitors();
-        }
-        if (pendingLayersUpdate) {
-            pendingLayersUpdate = false;
-            updateLayers();
-        }
-        if (pendingWorkspacesUpdate) {
-            pendingWorkspacesUpdate = false;
-            getWorkspaces.running = true;
-        }
-        if (pendingActiveWorkspaceUpdate) {
-            pendingActiveWorkspaceUpdate = false;
-            getActiveWorkspace.running = true;
-        }
+//
+//    function scheduleUpdates(windows, monitors, layers, workspaces, activeWorkspace) {
+//        pendingWindowsUpdate = pendingWindowsUpdate || !!windows;
+//        pendingMonitorsUpdate = pendingMonitorsUpdate || !!monitors;
+//        pendingLayersUpdate = pendingLayersUpdate || !!layers;
+//        pendingWorkspacesUpdate = pendingWorkspacesUpdate || !!workspaces;
+//        pendingActiveWorkspaceUpdate = pendingActiveWorkspaceUpdate || !!activeWorkspace;
+//
+//        const debounceMs = Math.max(0, Config.options.hacks.hyprlandEventDebounceMs);
+//        if (debounceMs === 0) {
+//            flushPendingUpdates();
+//        } else {
+//            eventDebounceTimer.interval = debounceMs;
+//            eventDebounceTimer.restart();
+//        }
+//    }
+//
+//    function flushPendingUpdates() {
+//        if (pendingWindowsUpdate) {
+//            pendingWindowsUpdate = false;
+//            updateWindowList();
+//        }
+//        if (pendingMonitorsUpdate) {
+//            pendingMonitorsUpdate = false;
+//            updateMonitors();
+//        }
+//        if (pendingLayersUpdate) {
+//            pendingLayersUpdate = false;
+//            updateLayers();
+//        }
+//        if (pendingWorkspacesUpdate) {
+//            pendingWorkspacesUpdate = false;
+//            getWorkspaces.running = true;
+//        }
+//        if (pendingActiveWorkspaceUpdate) {
+//            pendingActiveWorkspaceUpdate = false;
+//            getActiveWorkspace.running = true;
+//        }
 //>>>>>>> main
-    }
+//    }
 
     function rebuildData() {
         if (!_rawHyprkoolData || !_rawClientsData) return;
@@ -159,8 +159,9 @@ Singleton {
 
 
     Component.onCompleted: {
-        scheduleUpdates(true, true, true, true, true);
-        flushPendingUpdates();
+        //scheduleUpdates(true, true, true, true, true);
+        console.log(workspaces)
+        //flushPendingUpdates();
     }
 
     Connections {
@@ -172,7 +173,7 @@ Singleton {
                 return;
 
             if (eventName === "openwindow" || eventName === "closewindow" || eventName === "movewindow" || eventName === "movewindowv2" || eventName === "windowtitle") {
-                scheduleUpdates(true, false, false, true, false);
+                //scheduleUpdates(true, false, false, true, false);
                 return;
             }
 

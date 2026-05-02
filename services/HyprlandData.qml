@@ -38,6 +38,66 @@ Singleton {
     property bool pendingActiveWorkspaceUpdate: false
 //>>>>>>> main
 
+
+    Timer {
+        interval: 1000   // 1 second
+        running: true
+        repeat: true
+        onTriggered: {
+            //logUpdatedVariables()
+        }
+    }
+
+    property var trackedVariables: [] 
+
+
+    function logUpdatedVariables() {
+        var variablesToTrack = [
+            { name: "workspaceIds", current: workspaceIds },
+            { name: "windowList", current: windowList },
+            { name: "addresses", current: addresses },
+            { name: "windowByAddress", current: windowByAddress },
+            { name: "workspaces", current: workspaces },
+            { name: "allWorkspaces", current: allWorkspaces },
+            { name: "workspaceIds", current: workspaceIds },
+            { name: "workspaceById", current: workspaceById },
+            { name: "activeWorkspace", current: activeWorkspace },
+            { name: "monitors", current: monitors },
+            { name: "monitorGeometries", current: monitorGeometries },
+            { name: "layers", current: layers },
+            { name: "_rawHyprkoolData", current: _rawHyprkoolData },
+            { name: "_rawClientsData", current: _rawClientsData },
+            { name: "pendingWindowsUpdate", current: pendingWindowsUpdate },
+            { name: "pendingMonitorsUpdate", current: pendingMonitorsUpdate },
+            { name: "pendingLayersUpdate", current: pendingLayersUpdate },
+            { name: "pendingWorkspacesUpdate", current: pendingWorkspacesUpdate },
+            { name: "pendingActiveWorkspaceUpdate", current: pendingActiveWorkspaceUpdate }
+        ]
+        if (trackedVariables.length === 0) {
+            for (var i = 0; i < variablesToTrack.length; i++) {
+                console.log(variablesToTrack[i].name + " initial value:" + variablesToTrack[i].current)
+                trackedVariables.push({
+                    name: variablesToTrack[i].name,
+                    current: variablesToTrack[i].current,
+                    previous: variablesToTrack[i].current 
+                });
+            }
+        }
+        for (var i = 0; i < trackedVariables.length; i++) {
+            var trackedVar = trackedVariables[i];
+            if (trackedVar.current !== trackedVar.previous) {
+                console.log(trackedVar.name + " has changed to: " + trackedVar.current);
+                trackedVar.previous = trackedVar.current; 
+            }
+            for (var j = 0; j < variablesToTrack.length; j++) {
+                if (trackedVar.name === variablesToTrack[j].name) {
+                    trackedVar.current = variablesToTrack[j].current;
+                    break;
+                }
+            }
+        }
+    }
+
     function updateHyprkoolData() {
         getHyprkoolData.running = true;
     }
@@ -56,12 +116,13 @@ Singleton {
 
     function updateAll() {
 //<<<<<<< HEAD
+        console.log("update All")
         updateHyprkoolData();
         updateClients();
         updateMonitorGeometries();
         updateLayers();
 //=======
-//        scheduleUpdates(true, true, true, true, true);
+        scheduleUpdates(true, true, true, true, true);
     }
 //
 //    function scheduleUpdates(windows, monitors, layers, workspaces, activeWorkspace) {
@@ -160,7 +221,7 @@ Singleton {
 
     Component.onCompleted: {
         //scheduleUpdates(true, true, true, true, true);
-        console.log(workspaces)
+        //console.log(workspaces)
         //flushPendingUpdates();
     }
 
@@ -178,16 +239,16 @@ Singleton {
             }
 
             if (eventName === "workspace" || eventName === "workspacev2" || eventName === "focusedmon" || eventName === "focusedmonv2" || eventName === "activewindow" || eventName === "activewindowv2") {
-                scheduleUpdates(false, false, false, true, true);
+                //scheduleUpdates(false, false, false, true, true);
                 return;
             }
 
             if (eventName.startsWith("monitor") || eventName === "configreloaded") {
-                scheduleUpdates(true, true, false, true, true);
+                //scheduleUpdates(true, true, false, true, true);
                 return;
             }
 
-            scheduleUpdates(true, true, true, true, true);
+            //scheduleUpdates(true, true, true, true, true);
         }
     }
 
@@ -206,6 +267,7 @@ Singleton {
             onStreamFinished: {
                 root._rawHyprkoolData = JSON.parse(hyprkoolCollector.text);
                 root.rebuildData();
+                console.log("stream process get hyprkool data :" + root._rawHyprkoolData)
             }
         }
     }

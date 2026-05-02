@@ -9,16 +9,6 @@ Singleton {
     id: root
 // <<<<<<< hyprkool
     
-//    property QtObject options: QtObject {
-//        property QtObject overview: QtObject {
-//            property int rows: 2
-//            property int columns: 5
-//            property real scale: 0.16
-//            property bool enable: true
-//            property bool shadow: false
-//            property real opacity: 0.5
-//            property int blur_strength: 1
-//            property string scheme_path: "/home/shinkuan/.local/state/caelestia/scheme.json"
 // =======
 
     property var userOptions: ({})
@@ -118,7 +108,8 @@ Singleton {
         }
 
         property QtObject overview: QtObject {
-            property string scheme_path: "/home/shinkuan/.local/state/caelestia/scheme.json"
+            property string scheme_path: "/home/briar/.local/state/caelestia/scheme.json"
+            property bool shadow: true
             property int rows: root.readInt("overview.rows", 4)
             property int columns: root.readInt("overview.columns", 4)
             property real scale: root.readReal("overview.scale", 0.16)

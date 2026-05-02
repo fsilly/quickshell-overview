@@ -168,6 +168,50 @@ Item {
     readonly property real specialGridHeight: root.specialWorkspaceRows * root.specialWorkspaceTileHeight + Math.max(0, root.specialWorkspaceRows - 1) * workspaceSpacing
     readonly property real specialStripHeight: root.specialStripPadding * 2 + root.specialStripTitleHeight + root.specialStripTitleGap + root.specialGridHeight
 
+    Timer {
+        interval: 1000   // 1 second
+        running: true
+        repeat: true
+        onTriggered: {
+            //logUpdatedVariables()
+        }
+    }
+
+    property var trackedVariables: [] 
+
+
+    function logUpdatedVariables() {
+        var variablesToTrack = [
+            { name: "workspaceIds", current: workspaceIds },
+            { name: "monitorData", current: monitorData },
+            { name: "gridRows", current: gridRows },
+            { name: "gridCols", current: gridCols }
+        ]
+        if (trackedVariables.length === 0) {
+            for (var i = 0; i < variablesToTrack.length; i++) {
+                console.log(variablesToTrack[i].name + " initial value:" + variablesToTrack[i].current)
+                trackedVariables.push({
+                    name: variablesToTrack[i].name,
+                    current: variablesToTrack[i].current,
+                    previous: variablesToTrack[i].current 
+                });
+            }
+        }
+        for (var i = 0; i < trackedVariables.length; i++) {
+            var trackedVar = trackedVariables[i];
+            if (trackedVar.current !== trackedVar.previous) {
+                console.log(trackedVar.name + " has changed to: " + trackedVar.current);
+                trackedVar.previous = trackedVar.current; 
+            }
+            for (var j = 0; j < variablesToTrack.length; j++) {
+                if (trackedVar.name === variablesToTrack[j].name) {
+                    trackedVar.current = variablesToTrack[j].current;
+                    break;
+                }
+            }
+        }
+    }
+
     function getWorkspaceRow(workspaceId) {
         if (!Number.isFinite(workspaceId))
             return 0;

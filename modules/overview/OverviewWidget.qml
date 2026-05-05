@@ -24,7 +24,7 @@ Item {
     property var windows: HyprlandData.windowList
     property var windowByAddress: HyprlandData.windowByAddress
     property var windowAddresses: HyprlandData.addresses
-    property var workspaceIds: HyprlandData.workspaceIds
+    property var workspaceNames: HyprlandData.workspaceNames
     property var monitorData: HyprlandData.monitors.find(m => m.id === root.monitor?.id)
     property var activeActivity: monitorData?.activities?.find(a => a.focused) ?? monitorData?.activities?.[0]
     property var workspacesGrid: activeActivity?.workspaces ?? []
@@ -873,7 +873,7 @@ Item {
                                                         specialWindow.y = specialWindow.initY
                                                     }
                                                     else if (targetWorkspace !== -1) {
-                                                        Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${specialWindow.windowData?.address}`)
+                                                        Hyprland.dispatch(`movetoworkspacesilent ${INVWorkspace}, address:${specialWindow.windowData?.address}`)
                                                         specialWindow.returnToHomeParent()
                                                         specialWindow.x = specialWindow.initX
                                                         specialWindow.y = specialWindow.initY
@@ -990,7 +990,7 @@ Item {
                             DropArea {
                                 anchors.fill: parent
                                 onEntered: {
-                                    root.draggingTargetWorkspace = -1;
+                                    root.draggingTargetWorkspace = "";
                                     root.draggingTargetSpecialWorkspace = root.createSpecialWorkspaceTarget;
                                 }
                                 onExited: {
@@ -1062,7 +1062,7 @@ Item {
                             // 1. Pinned windows are always on top
                             if (winA?.pinned !== winB?.pinned) {
                                 return winA?.pinned ? 1 : -1
-                            }
+                            } 
                             
                             // 2. Floating windows above tiled windows
                             if (winA?.floating !== winB?.floating) {
@@ -1197,7 +1197,7 @@ Item {
                                 Hyprland.dispatch(`movetoworkspacesilent special:${targetSpecialWorkspace}, address:${window.windowData?.address}`)
                                 updateWindowPosition.restart()
                             }
-                            else if (targetWorkspace !== -1 && targetWorkspace !== windowData?.workspace.id) {
+                            else if (targetWorkspace !== "" && targetWorkspace !== windowData?.workspace.id) {
                                 Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`)
 //>>>>>>>> main
                                 updateWindowPosition.restart()

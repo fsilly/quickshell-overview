@@ -19,7 +19,7 @@ Singleton {
 //=======
     property var workspaces: []
     property var allWorkspaces: []
-    property var workspaceIds: []
+    property var workspaceNames: []
     property var workspaceById: ({})
 //>>>>>>> main
     property var activeWorkspace: null
@@ -37,66 +37,6 @@ Singleton {
     property bool pendingWorkspacesUpdate: false
     property bool pendingActiveWorkspaceUpdate: false
 //>>>>>>> main
-
-
-    Timer {
-        interval: 1000   // 1 second
-        running: true
-        repeat: true
-        onTriggered: {
-            //logUpdatedVariables()
-        }
-    }
-
-    property var trackedVariables: [] 
-
-
-    function logUpdatedVariables() {
-        var variablesToTrack = [
-            { name: "workspaceIds", current: workspaceIds },
-            { name: "windowList", current: windowList },
-            { name: "addresses", current: addresses },
-            { name: "windowByAddress", current: windowByAddress },
-            { name: "workspaces", current: workspaces },
-            { name: "allWorkspaces", current: allWorkspaces },
-            { name: "workspaceIds", current: workspaceIds },
-            { name: "workspaceById", current: workspaceById },
-            { name: "activeWorkspace", current: activeWorkspace },
-            { name: "monitors", current: monitors },
-            { name: "monitorGeometries", current: monitorGeometries },
-            { name: "layers", current: layers },
-            { name: "_rawHyprkoolData", current: _rawHyprkoolData },
-            { name: "_rawClientsData", current: _rawClientsData },
-            { name: "pendingWindowsUpdate", current: pendingWindowsUpdate },
-            { name: "pendingMonitorsUpdate", current: pendingMonitorsUpdate },
-            { name: "pendingLayersUpdate", current: pendingLayersUpdate },
-            { name: "pendingWorkspacesUpdate", current: pendingWorkspacesUpdate },
-            { name: "pendingActiveWorkspaceUpdate", current: pendingActiveWorkspaceUpdate }
-        ]
-        if (trackedVariables.length === 0) {
-            for (var i = 0; i < variablesToTrack.length; i++) {
-                console.log(variablesToTrack[i].name + " initial value:" + variablesToTrack[i].current)
-                trackedVariables.push({
-                    name: variablesToTrack[i].name,
-                    current: variablesToTrack[i].current,
-                    previous: variablesToTrack[i].current 
-                });
-            }
-        }
-        for (var i = 0; i < trackedVariables.length; i++) {
-            var trackedVar = trackedVariables[i];
-            if (trackedVar.current !== trackedVar.previous) {
-                console.log(trackedVar.name + " has changed to: " + trackedVar.current);
-                trackedVar.previous = trackedVar.current; 
-            }
-            for (var j = 0; j < variablesToTrack.length; j++) {
-                if (trackedVar.name === variablesToTrack[j].name) {
-                    trackedVar.current = variablesToTrack[j].current;
-                    break;
-                }
-            }
-        }
-    }
 
     function updateHyprkoolData() {
         getHyprkoolData.running = true;
@@ -116,13 +56,12 @@ Singleton {
 
     function updateAll() {
 //<<<<<<< HEAD
-        console.log("update All")
         updateHyprkoolData();
         updateClients();
         updateMonitorGeometries();
         updateLayers();
 //=======
-        scheduleUpdates(true, true, true, true, true);
+        //scheduleUpdates(true, true, true, true, true);
     }
 //
 //    function scheduleUpdates(windows, monitors, layers, workspaces, activeWorkspace) {
@@ -189,6 +128,7 @@ Singleton {
                         if (monitor.focused && activity.focused && workspace.focused) {
                             activeWs = workspace;
                         }
+                        //console.log("INV: " + JSON.stringify(workspace))
                         workspace.windows.forEach(win => {
                             // Merge with client data
                             var clientData = clientsMap[win.address];
@@ -200,18 +140,23 @@ Singleton {
                                 win.floating = clientData.floating;
                                 // win.monitor is set below from the structure
                             }
-                            
                             win.workspace = workspace;
                             win.monitor = monitor.id;
                             wins.push(win);
                             winByAddr[win.address] = win;
                             addrs.push(win.address);
+                            //console.log("INV client" + JSON.stringify(win))
                         });
                     });
                 });
             });
         });
         
+        //console.log("INV: " + JSON.stringify(addrs))
+        //console.log("INV: " + JSON.stringify(winByAddr[addrs[4]], null, 2))
+        //console.log("INV: " + winByAddr[addrs[0]])
+        //console.log("INV: " + JSON.stringify(wins[3]))
+        //console.log("INV: " + JSON.stringify(activeWs).substridsfkdsjhfng(0, 4))
         root.windowList = wins;
         root.windowByAddress = winByAddr;
         root.addresses = addrs;
@@ -229,6 +174,14 @@ Singleton {
         target: Hyprland
 
         function onRawEvent(event) {
+            updateAll()
+        }
+    }
+    Connections {
+        target: Hyprland
+
+        function onRawEvent(event) {
+            updateAll()
             const eventName = `${event?.name ?? event?.event ?? event?.type ?? ""}`;
             if (["openlayer", "closelayer", "screencast"].includes(eventName))
                 return;
@@ -267,7 +220,6 @@ Singleton {
             onStreamFinished: {
                 root._rawHyprkoolData = JSON.parse(hyprkoolCollector.text);
                 root.rebuildData();
-                console.log("stream process get hyprkool data :" + root._rawHyprkoolData)
             }
         }
     }
@@ -304,7 +256,7 @@ Singleton {
 //<<<<<<< HEAD
                 root.monitorGeometries = JSON.parse(monitorGeometriesCollector.text);
 //=======
-                const rawWorkspaces = JSON.parse(workspacesCollector.text);
+                const rawWorkspaces = JSON.parse(hyprkoolCollector.text);
                 root.allWorkspaces = rawWorkspaces;
                 root.workspaces = rawWorkspaces.filter(ws => ws.id >= 1 && ws.id <= 100);
                 let tempWorkspaceById = {};
@@ -313,7 +265,7 @@ Singleton {
                     tempWorkspaceById[ws.id] = ws;
                 }
                 root.workspaceById = tempWorkspaceById;
-                root.workspaceIds = root.workspaces.map(ws => ws.id);
+                root.workspaceNames = root.workspaces.map(ws => ws.id);
 //>>>>>>> main
             }
         }

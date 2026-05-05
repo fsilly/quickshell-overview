@@ -148,7 +148,6 @@ Item { // Window
 
 //    clip: true
     Component.onCompleted: {
-        console.log("hello :)")
         Qt.callLater(() => root.initialized = true)
     }
 //>>>>>>> main

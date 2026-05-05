@@ -22,6 +22,7 @@ Scope {
             property bool blurEnabled: Config.options.overview.effects.enableBlur
             property bool backdropEnabled: Config.options.overview.effects.enableBackdrop
             property real backdropOpacity: Math.max(0, Math.min(1, Config.options.overview.effects.backdropOpacity))
+            property bool closeOnFocusLoss: Config.options.overview.closeOnFocusLoss ?? true
             screen: modelData
             visible: GlobalStates.overviewOpen && monitorIsFocused
 
@@ -43,7 +44,8 @@ Scope {
                 property bool canBeActive: root.monitorIsFocused
                 active: false
                 onCleared: () => {
-                    if (!active)
+                    // Only the monitor that owns the grab may close the overview
+                    if (root.closeOnFocusLoss && !active && canBeActive)
                         GlobalStates.overviewOpen = false;
                 }
             }
@@ -53,6 +55,21 @@ Scope {
                 function onOverviewOpenChanged() {
                     if (GlobalStates.overviewOpen) {
                         delayedGrabTimer.start();
+                    }
+                }
+            }
+
+            // Re-evaluate grab ownership when focused monitor changes
+            Connections {
+                target: Hyprland
+                function onFocusedMonitorChanged() {
+                    if (!GlobalStates.overviewOpen)
+                        return;
+                    // Transfer the grab to the newly focused monitor
+                    if (root.monitorIsFocused && !grab.active) {
+                        grab.active = true;
+                    } else if (!root.monitorIsFocused && grab.active) {
+                        grab.active = false;
                     }
                 }
             }
@@ -86,6 +103,18 @@ Scope {
                     color: "#000000"
                     opacity: root.backdropOpacity
                     z: 0
+                }
+
+                MouseArea {
+                    id: outsideClickCatcher
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+                    enabled: root.closeOnFocusLoss && GlobalStates.overviewOpen
+                    z: 0
+                    onPressed: mouse => {
+                        GlobalStates.overviewOpen = false;
+                        mouse.accepted = true;
+                    }
                 }
 
                 Keys.onPressed: event => {

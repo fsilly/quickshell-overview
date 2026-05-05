@@ -47,6 +47,7 @@
     "scale": 0.16,
     "enable": true,
     "hideEmptyRows": true,
+    "closeOnFocusLoss": true,
     "useWorkspaceMap": false,
     "workspaceMap": [0, 10],
     "orderRightLeft": false,
@@ -81,10 +82,12 @@
     "topMargin": 100
   },
   "windowPreview": {
+    "showIcons": true,
     "iconToWindowRatio": 0.25,
     "iconToWindowRatioCompact": 0.45,
     "xwaylandIndicatorToIconRatio": 0.35,
-    "inactiveMonitorOpacity": 0.4
+    "inactiveMonitorOpacity": 0.4,
+    "cropToFill": false
   },
   "hacks": {
     "arbitraryRaceConditionDelay": 150,

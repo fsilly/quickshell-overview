@@ -1087,14 +1087,14 @@ Item {
 //                    monitorData: root.monitorData
                     
                     // Calculate scale relative to window's source monitor
-                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
-                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
-                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
-                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
-                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
-                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
-                    
-                    // Scale windows to fit the workspace size, accounting for different monitor sizes
+//                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
+//                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
+//                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
+//                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
+//                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
+//                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
+//                    
+//                    // Scale windows to fit the workspace size, accounting for different monitor sizes
                     scale: Math.min(
                         root.workspaceImplicitWidth / sourceMonitorWidth,
                         root.workspaceImplicitHeight / sourceMonitorHeight

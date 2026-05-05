@@ -1286,22 +1286,26 @@ Item {
                     if (name == "") return 0;
                     const match = name.match(/\((\d+) (\d+)\)/);
                     //console.log("INV name match: " + name + " " + match)
-                    const activeWsCol = parseInt(match[2]) - 1;
-                    //console.log("INV: activews row: " + activeWsCol);
-                    if (match) return activeWsCol;
+                    if (match) {
+                        const activeWsCol = parseInt(match[2]) - 1;
+                        //console.log("INV: activews row: " + activeWsCol);
+                        return activeWsCol;
+                    }
                     return 0;
                 }
                 property int activeWorkspaceColIndex: {
                     const name = activeWs?.name ?? "";
                     if (name == "") return 0;
                     const match = name.match(/\((\d+) (\d+)\)/);
-                    const activeWsCol = parseInt(match[1]) - 1;
-                    console.log("INV aws x: " + x);
-                    console.log("INV aws y: " + y);
-                    //console.log("INV: activews col: " + activeWsCol);
-                    //console.log("INV: width : " + width);
-                    //console.log("INV: radius : " + root.activeBorderColor);
-                    if (match) return activeWsCol;
+                    if (match) {
+                        const activeWsCol = parseInt(match[1]) - 1;
+                        //console.log("INV aws x: " + x);
+                        //console.log("INV aws y: " + y);
+                        //console.log("INV: activews col: " + activeWsCol);
+                        //console.log("INV: width : " + width);
+                        console.log("INV: radius : " + root.activeBorderColor);
+                        return activeWsCol;
+                    }
                     return 0;
                 }
 //=======
@@ -1321,10 +1325,10 @@ Item {
 //>>>>>>> main
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
-                color: root.activeBorderColor
+                color: "transparent"
                 radius: Appearance.rounding.screenRounding * root.scale
                 border.width: 2
-                border.color: root.activeBorderColor
+                border.color: "#ffffff"
                 Behavior on x {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
                 }

@@ -15,7 +15,7 @@ Item {
     required property var panelWindow
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(panelWindow.screen)
     readonly property var toplevels: ToplevelManager.toplevels
-    readonly property int effectiveActiveWorkspaceId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.name ?? ""))
+    readonly property string effectiveActiveWorkspaceId: monitor?.activeWorkspace?.name ?? ""
     readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
     readonly property bool useWorkspaceMap: Config.options.overview.useWorkspaceMap
     readonly property var workspaceMap: Config.options.overview.workspaceMap
@@ -1155,7 +1155,7 @@ Item {
                         const colIndex = parseInt(match[1]) - 1;
                         //console.log("INV col: " + colIndex);
                         //console.log("INV scale: " + root.scale)
-                        console.log("INV offset widget: " + (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex);
+                        //console.log("INV offset widget: " + (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex);
                         if (match && match[1]) return colIndex;
                         return 0;
                     }
@@ -1276,25 +1276,43 @@ Item {
 
             Rectangle { // Focused workspace indicator
                 id: focusedWorkspaceIndicator
+//
+//        anchors.fill: parent
+//        anchors.margins: Appearance.sizes.elevationMargin
 //<<<<<<< HEAD
                 property var activeWs: HyprlandData.activeWorkspace
                 property int activeWorkspaceRowIndex: {
                     const name = activeWs?.name ?? "";
+                    if (name == "") return 0;
                     const match = name.match(/\((\d+) (\d+)\)/);
-                    if (match) return parseInt(match[2]) - 1;
+                    //console.log("INV name match: " + name + " " + match)
+                    const activeWsCol = parseInt(match[2]) - 1;
+                    //console.log("INV: activews row: " + activeWsCol);
+                    if (match) return activeWsCol;
                     return 0;
                 }
                 property int activeWorkspaceColIndex: {
                     const name = activeWs?.name ?? "";
+                    if (name == "") return 0;
                     const match = name.match(/\((\d+) (\d+)\)/);
-                    if (match) return parseInt(match[1]) - 1;
+                    const activeWsCol = parseInt(match[1]) - 1;
+                    console.log("INV aws x: " + x);
+                    console.log("INV aws y: " + y);
+                    //console.log("INV: activews col: " + activeWsCol);
+                    //console.log("INV: width : " + width);
+                    //console.log("INV: radius : " + root.activeBorderColor);
+                    if (match) return activeWsCol;
                     return 0;
                 }
 //=======
 //                property int activeWorkspaceRowIndex: root.getWorkspaceRow(root.effectiveActiveWorkspaceId)
 //                property int activeWorkspaceColIndex: root.getWorkspaceColumn(root.effectiveActiveWorkspaceId)
 //>>>>>>>> main
-                x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
+                x: { 
+                    const x = (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex;
+                    console.log("INV function btw aws: " + x);
+                    return x;
+                }
                 y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
 //<<<<<<< HEAD
                 z: root.windowDraggingZ + 1
@@ -1303,7 +1321,7 @@ Item {
 //>>>>>>> main
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
-                color: "transparent"
+                color: root.activeBorderColor
                 radius: Appearance.rounding.screenRounding * root.scale
                 border.width: 2
                 border.color: root.activeBorderColor

@@ -157,9 +157,9 @@ Item { // Window
 
 //    clip: true
     Component.onCompleted: {
-        console.log("INV window x and y: " + initX + " " + initY)
-        console.log("INV window relx " + normalizedRelX + " " + xOffset)
-        console.log("INV window scale: " + root.scale + " " + xOffset)
+//        console.log("INV window x and y: " + initX + " " + initY)
+//        console.log("INV window relx " + normalizedRelX + " " + xOffset)
+//        console.log("INV window scale: " + root.scale + " " + xOffset)
         Qt.callLater(() => root.initialized = true)
     }
 //>>>>>>> main

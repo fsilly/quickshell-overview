@@ -126,6 +126,7 @@ Singleton {
             property bool hideEmptyRows: root.readBool("overview.hideEmptyRows", true)
             property bool useWorkspaceMap: root.readBool("overview.useWorkspaceMap", true)
             property var workspaceMap: root.read("overview.workspaceMap", [4, 4])
+            property bool closeOnFocusLoss: root.readBool("overview.closeOnFocusLoss", true)
             property bool orderRightLeft: root.readBool("overview.orderRightLeft", false)
             property bool orderBottomUp: root.readBool("overview.orderBottomUp", false)
             property bool previewsEnabled: root.readBool("overview.previewsEnabled", true)
@@ -160,10 +161,12 @@ Singleton {
         }
 
         property QtObject windowPreview: QtObject {
+            property bool showIcons: root.readBool("windowPreview.showIcons", true)
             property real iconToWindowRatio: root.readReal("windowPreview.iconToWindowRatio", 0.25)
             property real iconToWindowRatioCompact: root.readReal("windowPreview.iconToWindowRatioCompact", 0.45)
             property real xwaylandIndicatorToIconRatio: root.readReal("windowPreview.xwaylandIndicatorToIconRatio", 0.35)
             property real inactiveMonitorOpacity: root.readReal("windowPreview.inactiveMonitorOpacity", 0.4)
+            property bool cropToFill: root.readBool("windowPreview.cropToFill", false)
         }
 
         property QtObject hacks: QtObject {

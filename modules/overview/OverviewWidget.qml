@@ -1120,26 +1120,26 @@ Item {
                     windowData: windowByAddress[address]
                     toplevel: modelData
 //<<<<<<< HEAD
-//                    monitorData: root.monitorData
+                    monitorData: root.monitorData
+                  
+                  // Calculate scale relative to window's source monitor
+                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
+                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
+                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
+                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
+                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
+                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
                     
-                    // Calculate scale relative to window's source monitor
-//                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
-//                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
-//                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
-//                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
-//                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
-//                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
-//                    
-//                    // Scale windows to fit the workspace size, accounting for different monitor sizes
+                    // Scale windows to fit the workspace size, accounting for different monitor sizes
 //                    scale: Math.min(
 //                        root.workspaceImplicitWidth / sourceMonitorWidth,
 //                        root.workspaceImplicitHeight / sourceMonitorHeight
 //                    )
                     
 //=======
-                    monitorData: monitor
+//                    monitorData: monitor
                     widgetMonitorData: root.monitorData
-//                    scale: root.scale
+                    scale: root.scale
 //>>>>>>>> main
                     availableWorkspaceWidth: root.workspaceImplicitWidth
                     availableWorkspaceHeight: root.workspaceImplicitHeight
@@ -1154,6 +1154,8 @@ Item {
                         const match = name.match(/\((\d+) (\d+)\)/);
                         const colIndex = parseInt(match[1]) - 1;
                         //console.log("INV col: " + colIndex);
+                        //console.log("INV scale: " + root.scale)
+                        console.log("INV offset widget: " + (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex);
                         if (match && match[1]) return colIndex;
                         return 0;
                     }
@@ -1171,6 +1173,8 @@ Item {
 //>>>>>>>> main
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
+//                    xOffset: 0;
+//                    yOffset: 0;
 
                     Timer {
                         id: updateWindowPosition

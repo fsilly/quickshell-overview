@@ -15,12 +15,12 @@ Item {
     required property var panelWindow
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(panelWindow.screen)
     readonly property var toplevels: ToplevelManager.toplevels
-    readonly property int effectiveActiveWorkspaceId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.id ?? 1))
+    readonly property int effectiveActiveWorkspaceId: Math.max(1, Math.min(100, monitor?.activeWorkspace?.name ?? ""))
     readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
     readonly property bool useWorkspaceMap: Config.options.overview.useWorkspaceMap
     readonly property var workspaceMap: Config.options.overview.workspaceMap
     readonly property int workspaceOffset: useWorkspaceMap ? Number(workspaceMap[root.monitor?.id] ?? 0) : 0
-    readonly property int workspaceGroup: Math.floor((effectiveActiveWorkspaceId - workspaceOffset - 1) / workspacesShown)
+    //readonly property int workspaceGroup: Math.floor((effectiveActiveWorkspaceId - workspaceOffset - 1) / workspacesShown)
     property bool monitorIsFocused: (Hyprland.focusedMonitor?.name == monitor.name)
     property var windows: HyprlandData.windowList
     property var windowByAddress: HyprlandData.windowByAddress
@@ -192,7 +192,6 @@ Item {
 
     function logUpdatedVariables() {
         var variablesToTrack = [
-            { name: "workspaceIds", current: workspaceIds },
             { name: "monitorData", current: monitorData },
             { name: "gridRows", current: gridRows },
             { name: "gridCols", current: gridCols }
@@ -222,18 +221,18 @@ Item {
         }
     }
 
-    function getWorkspaceRow(workspaceId) {
-        if (!Number.isFinite(workspaceId))
+    function getWorkspaceRow(workspaceName) {
+        if (workspaceName != "")
             return 0;
-        const adjusted = workspaceId - workspaceOffset;
+        const adjusted = workspaceName - workspaceOffset;
         const normalRow = Math.floor((adjusted - 1) / Config.options.overview.columns) % Config.options.overview.rows;
         return Config.options.overview.orderBottomUp ? (Config.options.overview.rows - normalRow - 1) : normalRow;
     }
 
-    function getWorkspaceColumn(workspaceId) {
-        if (!Number.isFinite(workspaceId))
+    function getWorkspaceColumn(workspaceName) {
+        if (workspaceName != "")
             return 0;
-        const adjusted = workspaceId - workspaceOffset;
+        const adjusted = workspaceName;// - workspaceOffset;
         const normalCol = (adjusted - 1) % Config.options.overview.columns;
         return Config.options.overview.orderRightLeft ? (Config.options.overview.columns - normalCol - 1) : normalCol;
     }
@@ -248,10 +247,10 @@ Item {
         if (!Number.isFinite(delta) || delta === 0)
             return;
 
-        const currentId = monitor?.activeWorkspace?.id ?? effectiveActiveWorkspaceId;
+        const currentId = monitor?.activeWorkspace?.name ?? effectiveActiveWorkspaceId;
         const minWorkspaceId = workspaceOffset + 1;
         let maxWorkspaceId = minWorkspaceId + workspacesShown - 1;
-        for (const workspaceId of (workspaceIds ?? [])) {
+        for (const workspaceId of (workspaceNames ?? [])) {
             if (Number.isFinite(workspaceId) && workspaceId >= minWorkspaceId) {
                 maxWorkspaceId = Math.max(maxWorkspaceId, workspaceId);
             }
@@ -316,14 +315,14 @@ Item {
     }
 
     function workspaceHasWindows(workspaceId) {
-        if (!Number.isFinite(workspaceId))
-            return false;
+//        if (!Number.isFinite(workspaceId))
+//            return false;
 
         for (const addr in windowByAddress) {
             const win = windowByAddress[addr];
             if (root.isSpecialWorkspace(win))
                 continue;
-            if ((win?.workspace?.id ?? -1) === workspaceId)
+            if ((win?.workspace?.name ?? -1) === workspaceId)
                 return true;
         }
         return false;
@@ -391,11 +390,11 @@ Item {
         // Add rows with windows
         for (let addr in windowByAddress) {
             const win = windowByAddress[addr];
-            const wsId = win?.workspace?.id;
-            if (wsId >= firstWorkspace && wsId <= lastWorkspace) {
+            const wsId = win?.workspace?.name;
+//            if (wsId >= firstWorkspace && wsId <= lastWorkspace) {
                 const rowIndex = getWorkspaceRow(wsId);
                 rows.add(rowIndex);
-            }
+//            }
         }
 
         return rows;
@@ -1086,7 +1085,7 @@ Item {
                                 return false;
                             const minWorkspace = root.workspaceGroup * root.workspacesShown + 1 + workspaceOffset;
                             const maxWorkspace = (root.workspaceGroup + 1) * root.workspacesShown + workspaceOffset;
-                            const inWorkspaceGroup = (minWorkspace <= win?.workspace?.id && win?.workspace?.id <= maxWorkspace)
+                            const inWorkspaceGroup = (minWorkspace <= win?.workspace?.name && win?.workspace?.name <= maxWorkspace)
                             return inWorkspaceGroup;
 // //>>>>>>>> main
                         }).sort((a, b) => {
@@ -1132,10 +1131,10 @@ Item {
 //                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
 //                    
 //                    // Scale windows to fit the workspace size, accounting for different monitor sizes
-                    scale: Math.min(
-                        root.workspaceImplicitWidth / sourceMonitorWidth,
-                        root.workspaceImplicitHeight / sourceMonitorHeight
-                    )
+//                    scale: Math.min(
+//                        root.workspaceImplicitWidth / sourceMonitorWidth,
+//                        root.workspaceImplicitHeight / sourceMonitorHeight
+//                    )
                     
 //=======
                     monitorData: monitor
@@ -1153,13 +1152,17 @@ Item {
                     property int workspaceColIndex: {
                         const name = windowData?.workspace?.name ?? "";
                         const match = name.match(/\((\d+) (\d+)\)/);
-                        if (match && match[1]) return parseInt(match[1]) - 1;
+                        const colIndex = parseInt(match[1]) - 1;
+                        //console.log("INV col: " + colIndex);
+                        if (match && match[1]) return colIndex;
                         return 0;
                     }
                     property int workspaceRowIndex: {
                         const name = windowData?.workspace?.name ?? "";
                         const match = name.match(/\((\d+) (\d+)\)/);
-                        if (match && match[2]) return parseInt(match[2]) - 1;
+                        const rowIndex = parseInt(match[2]) - 1;
+                        //console.log("INV row: " + rowIndex);
+                        if (match && match[2]) return rowIndex;
                         return 0;
                     }
 //=======
@@ -1181,6 +1184,7 @@ Item {
 //=======
                             window.x = Math.round(Math.max((windowData?.at[0] - (monitor?.x ?? 0) - (monitorData?.reserved?.[0] ?? 0)) * root.scale * window.widthRatio, 0) + xOffset)
                             window.y = Math.round(Math.max((windowData?.at[1] - (monitor?.y ?? 0) - (monitorData?.reserved?.[1] ?? 0)) * root.scale * window.heightRatio, 0) + yOffset)
+                            //console.log("INV, window.x y: " + window.x + ", " + window.y)
 //>>>>>>>> main
                         }
                     }
@@ -1234,7 +1238,7 @@ Item {
                                 Hyprland.dispatch(`movetoworkspacesilent special:${targetSpecialWorkspace}, address:${window.windowData?.address}`)
                                 updateWindowPosition.restart()
                             }
-                            else if (targetWorkspace !== "" && targetWorkspace !== windowData?.workspace.id) {
+                            else if (targetWorkspace !== "" && targetWorkspace !== windowData?.workspace.name) {
                                 Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace}, address:${window.windowData?.address}`)
 //>>>>>>>> main
                                 updateWindowPosition.restart()

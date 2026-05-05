@@ -21,36 +21,36 @@ Item { // Window
     property int recaptureToken: 0
     property bool restrictToWorkspace: true
 //<<<<<<< HEAD
-//    property var monitorGeometry: HyprlandData.monitorGeometries.find(m => m.id == (windowData?.monitor ?? -1))
-//    property real monitorX: monitorGeometry?.x ?? 0
-//    property real monitorY: monitorGeometry?.y ?? 0
-//    property real monitorWidth: monitorGeometry?.width ?? 1920
-//    property real monitorHeight: monitorGeometry?.height ?? 1080
-//    property real monitorReservedTop: monitorGeometry?.reserved?.[1] ?? 0
-//    property real monitorReservedLeft: monitorGeometry?.reserved?.[0] ?? 0
-//
-//    property real rawRelX: (windowData?.at?.[0] ?? 0) - monitorX - monitorReservedLeft
-//    property real rawRelY: (windowData?.at?.[1] ?? 0) - monitorY - monitorReservedTop
-//
-//    // Normalize coordinates to be within the monitor bounds (handling workspace offsets)
-//    property real normalizedRelX: {
-//        let w = monitorWidth;
-//        if (w <= 0) return 0;
-//        let val = rawRelX % w;
-//        if (val < 0) val += w;
-//        return val;
-//    }
-//    
-//    property real normalizedRelY: {
-//        let h = monitorHeight;
-//        if (h <= 0) return 0;
-//        let val = rawRelY % h;
-//        if (val < 0) val += h;
-//        return val;
-//    }
-//
-//    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
-//    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
+    property var monitorGeometry: HyprlandData.monitorGeometries.find(m => m.id == (windowData?.monitor ?? -1))
+    property real monitorX: monitorGeometry?.x ?? 0
+    property real monitorY: monitorGeometry?.y ?? 0
+    property real monitorWidth: monitorGeometry?.width ?? 1920
+    property real monitorHeight: monitorGeometry?.height ?? 1080
+    property real monitorReservedTop: monitorGeometry?.reserved?.[1] ?? 0
+    property real monitorReservedLeft: monitorGeometry?.reserved?.[0] ?? 0
+
+    property real rawRelX: (windowData?.at?.[0] ?? 0) - monitorX - monitorReservedLeft
+    property real rawRelY: (windowData?.at?.[1] ?? 0) - monitorY - monitorReservedTop
+
+    // Normalize coordinates to be within the monitor bounds (handling workspace offsets)
+    property real normalizedRelX: {
+        let w = monitorWidth;
+        if (w <= 0) return 0;
+        let val = rawRelX % w;
+        if (val < 0) val += w;
+        return val;
+    }
+    
+    property real normalizedRelY: {
+        let h = monitorHeight;
+        if (h <= 0) return 0;
+        let val = rawRelY % h;
+        if (val < 0) val += h;
+        return val;
+    }
+
+    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
+    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
 
 //=======
 //    property real initX: Math.max(normalizedRelX * root.scale * geometryScaleX, 0) + xOffset
@@ -78,6 +78,7 @@ Item { // Window
     }
 //    property real initX: Math.max(((windowData?.at[0] ?? 0) - positionBaseX) * root.scale * geometryScaleX, 0) + xOffset
 //    property real initY: Math.max(((windowData?.at[1] ?? 0) - positionBaseY) * root.scale * geometryScaleY, 0) + yOffset
+
 //>>>>>>> main
     property real xOffset: 0
     property real yOffset: 0
@@ -140,13 +141,13 @@ Item { // Window
     x: initX
     y: initY
 //<<<<<<< HEAD
-//    width: Math.min((windowData?.size?.[0] ?? 100) * root.scale, availableWorkspaceWidth)
-//    height: Math.min((windowData?.size?.[1] ?? 100) * root.scale, availableWorkspaceHeight)
-//    opacity: 1
+    width: Math.min((windowData?.size?.[0] ?? 100) * root.scale, availableWorkspaceWidth)
+    height: Math.min((windowData?.size?.[1] ?? 100) * root.scale, availableWorkspaceHeight)
+    opacity: 1
 //=======
-    width: Math.min(targetWindowWidth, availableWorkspaceWidth)
-    height: Math.min(targetWindowHeight, availableWorkspaceHeight)
-    opacity: (windowData?.monitor ?? -1) == widgetMonitorId ? 1 : Config.options.windowPreview.inactiveMonitorOpacity
+//    width: Math.min(targetWindowWidth, availableWorkspaceWidth)
+//    height: Math.min(targetWindowHeight, availableWorkspaceHeight)
+//    opacity: (windowData?.monitor ?? -1) == widgetMonitorId ? 1 : Config.options.windowPreview.inactiveMonitorOpacity
     visible: {
         const thisWsId = windowData?.workspace?.id;
         const isFullscreen = (windowData?.fullscreen ?? 0) > 0;
@@ -156,6 +157,9 @@ Item { // Window
 
 //    clip: true
     Component.onCompleted: {
+        console.log("INV window x and y: " + initX + " " + initY)
+        console.log("INV window relx " + normalizedRelX + " " + xOffset)
+        console.log("INV window scale: " + root.scale + " " + xOffset)
         Qt.callLater(() => root.initialized = true)
     }
 //>>>>>>> main
@@ -179,7 +183,8 @@ Item { // Window
 
 //    Rectangle {
 //        anchors.fill: parent
-//<<<<<<< HEAD
+////<<<<<<< HEAD
+//        id: preview
 //        radius: Appearance.rounding.windowRounding * root.scale
 //        clip: true
 //        color: "transparent"
@@ -199,27 +204,29 @@ Item { // Window
 //            blur: 1.0
 //            visible: Config.options.overview.blur_strength > 0
 //        }
-//=======
+////=======
 //        captureSource: shouldCapturePreview ? root.toplevel : null
 //        live: livePreviewEnabled
 //>>>>>>> main
     // Opaque background for windows on the active monitor.
     // The simplest solution for making those windows fully opaque and not interacting with actual
     // windows behind the overview, e.g., applying blur to them.
-    Rectangle {
-        visible: (root.windowData?.monitor ?? -1) === root.widgetMonitorId
-        anchors.fill: parent
-        radius: Appearance.rounding.windowRounding * root.scale
-        color: root.glassMode
-            ? ColorUtils.mix(Appearance.colors.colLayer2, Appearance.colors.colLayer0, 0.38)
-            : Appearance.colors.colLayer2
-    }
+//    Rectangle {
+//        visible: (root.windowData?.monitor ?? -1) === root.widgetMonitorId
+//        anchors.fill: parent
+//        radius: Appearance.rounding.windowRounding * root.scale
+//        color: root.glassMode
+//            ? ColorUtils.mix(Appearance.colors.colLayer2, Appearance.colors.colLayer0, 0.38)
+//            : Appearance.colors.colLayer2
+//    }
 
     ScreencopyView {
         id: windowPreview
         readonly property real srcAspect: {
             const w = root.windowData?.size?.[0] ?? 0;
             const h = root.windowData?.size?.[1] ?? 0;
+            //console.log("INV aspect name: " + root.windowData.title)
+            //console.log("INV aspect w and h: " + w + " " + h)
             return (w > 0 && h > 0) ? (w / h) : 1;
         }
         anchors.centerIn: parent

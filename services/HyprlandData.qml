@@ -20,7 +20,7 @@ Singleton {
     property var workspaces: []
     property var allWorkspaces: []
     property var workspaceNames: []
-    property var workspaceById: ({})
+    property var workspaceByNames: ({})
 //>>>>>>> main
     property var activeWorkspace: null
     property var monitors: []
@@ -140,12 +140,12 @@ Singleton {
                                 win.floating = clientData.floating;
                                 // win.monitor is set below from the structure
                             }
+                            //console.log("INV client" + JSON.stringify(win))
                             win.workspace = workspace;
                             win.monitor = monitor.id;
                             wins.push(win);
                             winByAddr[win.address] = win;
                             addrs.push(win.address);
-                            //console.log("INV client" + JSON.stringify(win))
                         });
                     });
                 });
@@ -258,14 +258,14 @@ Singleton {
 //=======
                 const rawWorkspaces = JSON.parse(hyprkoolCollector.text);
                 root.allWorkspaces = rawWorkspaces;
-                root.workspaces = rawWorkspaces.filter(ws => ws.id >= 1 && ws.id <= 100);
+                root.workspaces = rawWorkspaces.filter(ws => ws.name != "");  // perhaps this could be a check if the workspace x and y is not oustside the defined grid
                 let tempWorkspaceById = {};
                 for (var i = 0; i < root.workspaces.length; ++i) {
                     var ws = root.workspaces[i];
-                    tempWorkspaceById[ws.id] = ws;
+                    tempWorkspaceById[ws.name] = ws;
                 }
-                root.workspaceById = tempWorkspaceById;
-                root.workspaceNames = root.workspaces.map(ws => ws.id);
+                root.workspaceByNames = tempWorkspaceById;
+                root.workspaceNames = root.workspaces.map(ws => ws.name);
 //>>>>>>> main
             }
         }

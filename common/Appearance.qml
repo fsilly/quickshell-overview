@@ -163,6 +163,7 @@ Singleton {
             caelestiaColors.m3surfaceVariant = firstColor(palette, ["surface1", "surfaceVariant"], defaultColors.m3surfaceVariant);
             caelestiaColors.m3outline = firstColor(palette, ["overlay2", "outline"], defaultColors.m3outline);
             caelestiaColors.m3outlineVariant = firstColor(palette, ["overlay0", "outlineVariant"], defaultColors.m3outlineVariant);
+            //console.log("INV, color: "+caelestiaColors)
             if (tertiary)
                 caelestiaColors.m3secondaryContainer = ColorUtils.mix(secondaryContainer, tertiary, 0.7);
         } else {
@@ -180,8 +181,10 @@ Singleton {
                 "outlineVariant": "m3outlineVariant"
             };
             for (const key in map) {
-                if (palette[key])
+                if (palette[key]) {
                     caelestiaColors[map[key]] = palette[key];
+                    console.log("INV, color: "+key+"#"+palette[key])
+                }
             }
         }
 
@@ -278,6 +281,7 @@ Singleton {
     }
 
     Component.onCompleted: {
+        //console.log("INV appearance")
         if (colorSource === "caelestia")
             loadCaelestiaPalette();
     }

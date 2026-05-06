@@ -286,6 +286,16 @@ Item {
             return "Special";
         return raw.replace(/[-_]+/g, " ");
     }
+    
+    function sanatizeWSName(name) { // might be not needed with fn above
+        if (!name)
+            return "";
+        const match = name.match(/\((\d+) (\d+)\)/);
+        const x_col = parseInt(match[1]) - 1;
+        const y_col = parseInt(match[2]) - 1;
+        name = "("+x_col+", "+y_col+")"; //TODO z = activity number
+        return name;
+    }
 
     function nextSpecialWorkspaceName() {
         const taken = new Set();
@@ -515,7 +525,10 @@ Item {
                             property int colIndex: index
 // //<<<<<<< HEAD
                             property var workspaceData: root.workspacesGrid[rowIndex][colIndex]
-                            property string workspaceName: workspaceData.name
+                            property string workspaceName: {
+                                var name = root.sanatizeWSName(workspaceData.name);
+                                return name;
+                            }
 //                            property color defaultWorkspaceColor: ColorUtils.transparentize(Appearance.colors.colLayer1, 1.0 - Config.options.overview.opacity)
 //                            property color hoveredWorkspaceColor: ColorUtils.transparentize(ColorUtils.mix(Appearance.colors.colLayer1, Appearance.colors.colLayer1Hover, 0.1), 1.0 - Config.options.overview.opacity)
 //                            property color hoveredBorderColor: ColorUtils.transparentize(Appearance.colors.colLayer2Hover, 1.0 - Config.options.overview.opacity)
@@ -1303,7 +1316,7 @@ Item {
                         //console.log("INV aws y: " + y);
                         //console.log("INV: activews col: " + activeWsCol);
                         //console.log("INV: width : " + width);
-                        console.log("INV: radius : " + root.activeBorderColor);
+                        //console.log("INV: radius : " + root.activeBorderColor);
                         return activeWsCol;
                     }
                     return 0;
@@ -1314,7 +1327,7 @@ Item {
 //>>>>>>>> main
                 x: { 
                     const x = (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex;
-                    console.log("INV function btw aws: " + x);
+                    //console.log("INV function btw aws: " + x);
                     return x;
                 }
                 y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
@@ -1325,15 +1338,35 @@ Item {
 //>>>>>>> main
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
-                color: "transparent"
+                //color: "transparent"
+                color: ColorUtils.transparentize(Appearance.colors.colPrimary, 0.7) 
                 radius: Appearance.rounding.screenRounding * root.scale
                 border.width: 2
-                border.color: "#ffffff"
+                border.color: Appearance.colors.colPrimary
                 Behavior on x {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
                 }
                 Behavior on y {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                }
+                StyledText {
+                    anchors.centerIn: parent
+// //<<<<<<< HEAD
+                    text: sanatizeWSName(focusedWorkspaceIndicator.activeWs?.name);
+// //=======
+                    visible: focusedWorkspaceIndicator.activeWs?.name != ""
+//                                text: workspaceValue
+// //>>>>>>>> main
+                    font {
+                        pixelSize: root.workspaceNumberSize * root.scale
+                        weight: Font.DemiBold
+                        family: Appearance.font.family.expressive
+                    }
+                    //color: ColorUtils.transparentize(Appearance.colors.colOnLayer1, 0.8)
+                    color: ColorUtils.transparentize(ColorUtils.mix("#ffffff", Appearance.colors.colPrimary, 0.5), 0.3)
+                    //color: Appearance.colors.mcolOnPrimary
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }

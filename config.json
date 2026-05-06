@@ -1,7 +1,7 @@
 
 {
   "appearance": {
-    "colorSource": "default",
+    "colorSource": "caelestia",
     "caelestia": {
       "autoRefresh": true,
       "refreshInterval": 2000,

@@ -31,13 +31,17 @@ Format issues
 Bug issues:
  - [ ] 1 bug odd movement hopping when moving with left and right and up and down key instead of the hyprkool hotkeys (caused by qs overview core and maybe isnt just visual)
  - [ ] 2 icon warning when file manager is open (yazi i think)
-
+ - [ ] draggin window drops fails and kills 
 
 Feat:
  - [x] 1 having pwetty colors and have shadow + glass pink on ws active border
  - [ ] 2 have glassy border pink with the sahdow on the contianer
  - [x] 3 colors following caelestia shell
  - [ ] 4 having overview trigger some form of animations on hyprkool workspaces keybinding, with arrows
+
+
+ master pr ideas:
+ - [ ] nix integration flake + dev shell + json config generation, would require to install it inside programs.quickshell.configuration path = inputs ?
 
 
 

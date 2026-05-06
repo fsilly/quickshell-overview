@@ -275,7 +275,19 @@ Scope {
         }
     }
 
+    Timer {
+        id: quickShowExecute;
+        interval: 480;
+        repeat: false;
+        running: true;
+        onTriggered: {
+            ipc.close();
+            quickShowExecute.running = false;
+        }
+    }
+
     IpcHandler {
+        id: ipc
         target: "overview"
 
         function toggle() {
@@ -286,6 +298,13 @@ Scope {
         }
         function open() {
             GlobalStates.overviewOpen = true;
+        }
+        function quickShow() {
+            if (!quickShowExecute.running && GlobalStates.overviewOpen)
+                return;
+            open();
+            quickShowExecute.restart();
+            quickShowExecute.running = true;
         }
     }
 }

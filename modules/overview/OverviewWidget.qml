@@ -178,49 +178,6 @@ Item {
     readonly property real specialGridHeight: root.specialWorkspaceRows * root.specialWorkspaceTileHeight + Math.max(0, root.specialWorkspaceRows - 1) * workspaceSpacing
     readonly property real specialStripHeight: root.specialStripPadding * 2 + root.specialStripTitleHeight + root.specialStripTitleGap + root.specialGridHeight
 
-    Timer {
-        interval: 1000   // 1 second
-        running: true
-        repeat: true
-        onTriggered: {
-            //logUpdatedVariables()
-        }
-    }
-
-    property var trackedVariables: [] 
-
-
-    function logUpdatedVariables() {
-        var variablesToTrack = [
-            { name: "monitorData", current: monitorData },
-            { name: "gridRows", current: gridRows },
-            { name: "gridCols", current: gridCols }
-        ]
-        if (trackedVariables.length === 0) {
-            for (var i = 0; i < variablesToTrack.length; i++) {
-                console.log(variablesToTrack[i].name + " initial value:" + variablesToTrack[i].current)
-                trackedVariables.push({
-                    name: variablesToTrack[i].name,
-                    current: variablesToTrack[i].current,
-                    previous: variablesToTrack[i].current 
-                });
-            }
-        }
-        for (var i = 0; i < trackedVariables.length; i++) {
-            var trackedVar = trackedVariables[i];
-            if (trackedVar.current !== trackedVar.previous) {
-                console.log(trackedVar.name + " has changed to: " + trackedVar.current);
-                trackedVar.previous = trackedVar.current; 
-            }
-            for (var j = 0; j < variablesToTrack.length; j++) {
-                if (trackedVar.name === variablesToTrack[j].name) {
-                    trackedVar.current = variablesToTrack[j].current;
-                    break;
-                }
-            }
-        }
-    }
-
     function getWorkspaceRow(workspaceName) {
         if (workspaceName != "")
             return 0;
@@ -1136,13 +1093,13 @@ Item {
                     monitorData: root.monitorData
                   
                   // Calculate scale relative to window's source monitor
-                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
-                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
-                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
-                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
-                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
-                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
-                    
+//                    property real sourceMonitorWidth: (monitorGeometry?.transform % 2 === 1) ? 
+//                        (monitorGeometry?.height ?? 1920) / (monitorGeometry?.scale ?? 1) :
+//                        (monitorGeometry?.width ?? 1920) / (monitorGeometry?.scale ?? 1)
+//                    property real sourceMonitorHeight: (monitorGeometry?.transform % 2 === 1) ?
+//                        (monitorGeometry?.width ?? 1080) / (monitorGeometry?.scale ?? 1) :
+//                        (monitorGeometry?.height ?? 1080) / (monitorGeometry?.scale ?? 1)
+//                    
                     // Scale windows to fit the workspace size, accounting for different monitor sizes
 //                    scale: Math.min(
 //                        root.workspaceImplicitWidth / sourceMonitorWidth,
@@ -1166,6 +1123,7 @@ Item {
                         const name = windowData?.workspace?.name ?? "";
                         const match = name.match(/\((\d+) (\d+)\)/);
                         const colIndex = parseInt(match[1]) - 1;
+                        //console.log("INV root implicitMonitorWidth: " + root.workspaceImplicitWidth);
                         //console.log("INV col: " + colIndex);
                         //console.log("INV scale: " + root.scale)
                         //console.log("INV offset widget: " + (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex);
@@ -1315,6 +1273,8 @@ Item {
                         //console.log("INV aws x: " + x);
                         //console.log("INV aws y: " + y);
                         //console.log("INV: activews col: " + activeWsCol);
+                        //console.log("INV: monitor Data: "+JSON.stringify(root.monitorData))
+                        //console.log("INV: width : " + width);
                         //console.log("INV: width : " + width);
                         //console.log("INV: radius : " + root.activeBorderColor);
                         return activeWsCol;

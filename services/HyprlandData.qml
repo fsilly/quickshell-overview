@@ -127,11 +127,13 @@ Singleton {
                     row.forEach(workspace => {
                         if (monitor.focused && activity.focused && workspace.focused) {
                             activeWs = workspace;
+                            //console.log("INV: "+JSON.stringify(activeWs))
                         }
-                        //console.log("INV: " + JSON.stringify(workspace))
+                        console.log("INV: " + JSON.stringify(workspace))
                         workspace.windows.forEach(win => {
                             // Merge with client data
                             var clientData = clientsMap[win.address];
+                            console.log("INV clientData" + JSON.stringify(clientData))
                             if (clientData) {
                                 win.at = clientData.at;
                                 win.size = clientData.size;
@@ -139,6 +141,7 @@ Singleton {
                                 win.pinned = clientData.pinned;
                                 win.floating = clientData.floating;
                                 // win.monitor is set below from the structure
+                                //console.log("INV client" + JSON.stringify(win.at))
                             }
                             //console.log("INV client" + JSON.stringify(win))
                             win.workspace = workspace;

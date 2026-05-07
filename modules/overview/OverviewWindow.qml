@@ -21,36 +21,36 @@ Item { // Window
     property int recaptureToken: 0
     property bool restrictToWorkspace: true
 //<<<<<<< HEAD
-    property var monitorGeometry: HyprlandData.monitorGeometries.find(m => m.id == (windowData?.monitor ?? -1))
-    property real monitorX: monitorGeometry?.x ?? 0
-    property real monitorY: monitorGeometry?.y ?? 0
-    property real monitorWidth: monitorGeometry?.width ?? 1920
-    property real monitorHeight: monitorGeometry?.height ?? 1080
-    property real monitorReservedTop: monitorGeometry?.reserved?.[1] ?? 0
-    property real monitorReservedLeft: monitorGeometry?.reserved?.[0] ?? 0
-
-    property real rawRelX: (windowData?.at?.[0] ?? 0) - monitorX - monitorReservedLeft
-    property real rawRelY: (windowData?.at?.[1] ?? 0) - monitorY - monitorReservedTop
-
-    // Normalize coordinates to be within the monitor bounds (handling workspace offsets)
-    property real normalizedRelX: {
-        let w = monitorWidth;
-        if (w <= 0) return 0;
-        let val = rawRelX % w;
-        if (val < 0) val += w;
-        return val;
-    }
-    
-    property real normalizedRelY: {
-        let h = monitorHeight;
-        if (h <= 0) return 0;
-        let val = rawRelY % h;
-        if (val < 0) val += h;
-        return val;
-    }
-
-    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
-    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
+//    property var monitorGeometry: HyprlandData.monitorGeometries.find(m => m.id == (windowData?.monitor ?? -1))
+//    property real monitorX: monitorGeometry?.x ?? 0
+//    property real monitorY: monitorGeometry?.y ?? 0
+//    property real monitorWidth: monitorGeometry?.width ?? 1920
+//    property real monitorHeight: monitorGeometry?.height ?? 1080
+//    property real monitorReservedTop: monitorGeometry?.reserved?.[1] ?? 0
+//    property real monitorReservedLeft: monitorGeometry?.reserved?.[0] ?? 0
+//
+//    property real rawRelX: (windowData?.at?.[0] ?? 0) - monitorX - monitorReservedLeft
+//    property real rawRelY: (windowData?.at?.[1] ?? 0) - monitorY - monitorReservedTop
+//
+//    // Normalize coordinates to be within the monitor bounds (handling workspace offsets)
+//    property real normalizedRelX: {
+//        let w = monitorWidth;
+//        if (w <= 0) return 0;
+//        let val = rawRelX % w;
+//        if (val < 0) val += w;
+//        return val;
+//    }
+//    
+//    property real normalizedRelY: {
+//        let h = monitorHeight;
+//        if (h <= 0) return 0;
+//        let val = rawRelY % h;
+//        if (val < 0) val += h;
+//        return val;
+//    }
+//
+//    property real initX: Math.max(normalizedRelX * root.scale, 0) + xOffset
+//    property real initY: Math.max(normalizedRelY * root.scale, 0) + yOffset
 
 //=======
 //    property real initX: Math.max(normalizedRelX * root.scale * geometryScaleX, 0) + xOffset
@@ -76,8 +76,8 @@ Item { // Window
         const widgetScale = widgetMonitorData.scale ?? 1;
         return (widgetHeight * sourceScale) / (sourceHeight * widgetScale);
     }
-//    property real initX: Math.max(((windowData?.at[0] ?? 0) - positionBaseX) * root.scale * geometryScaleX, 0) + xOffset
-//    property real initY: Math.max(((windowData?.at[1] ?? 0) - positionBaseY) * root.scale * geometryScaleY, 0) + yOffset
+    property real initX: Math.max(((windowData?.at[0] ?? 0) - positionBaseX) * root.scale * geometryScaleX, 0) + xOffset
+    property real initY: Math.max(((windowData?.at[1] ?? 0) - positionBaseY) * root.scale * geometryScaleY, 0) + yOffset
 
 //>>>>>>> main
     property real xOffset: 0
@@ -161,6 +161,24 @@ Item { // Window
 //        console.log("INV window relx " + normalizedRelX + " " + xOffset)
 //        console.log("INV window scale: " + root.scale + " " + xOffset)
         Qt.callLater(() => root.initialized = true)
+        if (xOffset == 0) {
+//            console.log("\n")
+//            console.log("==============")
+//            console.log("INV xOffset: " + xOffset)
+//            console.log("INV initX: " + initX)
+//            console.log("INV availableWorkspaceWidth: " + availableWorkspaceWidth)
+//            console.log("INV x: "+x)
+//            console.log("INV positionBaseX: "+positionBaseX)
+//            console.log("INV windowData?.at[0] ?? 0): "+(windowData?.at[0] ?? 0))
+//            console.log("INV geometryScaleX: "+geometryScaleX)
+//            //console.log("INV rawRelX: "+rawRelX)
+//            //console.log("INV normalizedRelX: "+normalizedRelX)
+//            //console.log("INV monitorWidth: "+monitorWidth)
+//            console.log("INV monitorX: "+monitorX)
+//            console.log("INV widthRatio: "+widthRatio)
+//            console.log("INV targetWindowWidth: "+targetWindowWidth)
+//            console.log("INV widthRatio: "+widthRatio)
+        }
     }
 //>>>>>>> main
 

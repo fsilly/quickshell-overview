@@ -45,6 +45,11 @@ Feat:
 
 
 
+## 07/05/2026
+
+the issue of missplaced windows is caused by scaling 1 monitor (regardless of the other being scaled) and thus having a 2nd monitor at position 1600 instead of 1920, oddly, it causes windows to be displaced to the right by 20% (corrseponds to 1.2 scale) instead of to the left (1600 for 2nd monitor instead of 1920)
+
+oddly the missplacement to the right got worse when I used -1600 ?!
 
 
 

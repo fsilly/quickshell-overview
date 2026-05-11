@@ -530,7 +530,7 @@ Item {
                             StyledText {
                                 anchors.centerIn: parent
                                 visible: !workspace.showWallpaper
-                                text: workspaceValue
+                                text: workspaceValue -1
                                 font {
                                     pixelSize: root.workspaceNumberSize * root.scale
                                     weight: Font.DemiBold

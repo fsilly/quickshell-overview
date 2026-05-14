@@ -104,6 +104,7 @@ Singleton {
         }
 
         property QtObject overview: QtObject {
+            property bool enable2D: true;
             property int rows: root.readInt("overview.rows", 2)
             property int columns: root.readInt("overview.columns", 5)
             property real scale: root.readReal("overview.scale", 0.16)

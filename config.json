@@ -42,9 +42,9 @@
     }
   },
   "overview": {
-    "rows": 4,
-    "columns": 4,
-    "scale": 0.14,
+    "rows": 3,
+    "columns": 5,
+    "scale": 0.13,
     "enable": true,
     "hideEmptyRows": false,
     "closeOnFocusLoss": true,

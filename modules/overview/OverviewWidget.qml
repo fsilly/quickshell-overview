@@ -242,6 +242,19 @@ Item {
         return `${base}-${index}`;
     }
 
+    function formatWorkspaceName(wsId) {    
+        if (Config.options.overview.enable2D) {
+            const rows = Config.options.overview.rows;
+            const cols = Config.options.overview.columns;
+            wsId = wsId - 1;
+            const x = (wsId % cols) + 1;
+            const y = Math.floor(wsId / cols) % rows + 1;
+            return `(${x}, ${y})`
+        } else {
+            return wsId; 
+        }
+    }
+
     function wallpaperSource(path) {
         const trimmed = `${path ?? ""}`.trim();
         if (trimmed.length === 0)
@@ -530,7 +543,7 @@ Item {
                             StyledText {
                                 anchors.centerIn: parent
                                 visible: !workspace.showWallpaper
-                                text: workspaceValue -1
+                                text: formatWorkspaceName(workspaceValue)
                                 font {
                                     pixelSize: root.workspaceNumberSize * root.scale
                                     weight: Font.DemiBold
@@ -1105,6 +1118,27 @@ Item {
                 }
             }
 
+//            Rectangle { // Focused workspace indicator
+//                id: focusedWorkspaceIndicator
+//                property int activeWorkspaceRowIndex: root.getWorkspaceRow(root.effectiveActiveWorkspaceId)
+//                property int activeWorkspaceColIndex: root.getWorkspaceColumn(root.effectiveActiveWorkspaceId)
+//                x: (root.workspaceImplicitWidth + workspaceSpacing) * activeWorkspaceColIndex
+//                y: (root.workspaceImplicitHeight + workspaceSpacing) * activeWorkspaceRowIndex
+//                z: root.windowDraggingZ - 1
+//                width: root.workspaceImplicitWidth
+//                height: root.workspaceImplicitHeight
+//                color: "transparent"
+//                radius: Appearance.rounding.screenRounding * root.scale
+//                border.width: 2
+//                border.color: root.activeBorderColor
+//                Behavior on x {
+//                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+//                }
+//                Behavior on y {
+//                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+//                }
+//            }
+
             Rectangle { // Focused workspace indicator
                 id: focusedWorkspaceIndicator
                 property int activeWorkspaceRowIndex: root.getWorkspaceRow(root.effectiveActiveWorkspaceId)
@@ -1114,15 +1148,31 @@ Item {
                 z: root.windowDraggingZ - 1
                 width: root.workspaceImplicitWidth
                 height: root.workspaceImplicitHeight
-                color: "transparent"
+                //color: "transparent"
+                color: ColorUtils.transparentize(Appearance.colors.colPrimary, 0.7) 
                 radius: Appearance.rounding.screenRounding * root.scale
                 border.width: 2
-                border.color: root.activeBorderColor
+                border.color: Appearance.colors.colPrimary
                 Behavior on x {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
                 }
                 Behavior on y {
                     animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                }
+                StyledText {
+                    anchors.centerIn: parent
+                    text: formatWorkspaceName(effectiveActiveWorkspaceId);
+                    visible: focusedWorkspaceIndicator.activeWs?.name != ""
+                    font {
+                        pixelSize: root.workspaceNumberSize * root.scale
+                        weight: Font.DemiBold
+                        family: Appearance.font.family.expressive
+                    }
+                    //color: ColorUtils.transparentize(Appearance.colors.colOnLayer1, 0.8)
+                    color: ColorUtils.transparentize(ColorUtils.mix("#ffffff", Appearance.colors.colPrimary, 0.5), 0.3)
+                    //color: Appearance.colors.mcolOnPrimary
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }

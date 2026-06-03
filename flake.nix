@@ -69,12 +69,16 @@
 
     nixosModules.default = { lib, pkgs, config, ... }: let
       cfg = config.services.quickshell-overview;
+      configDir = mkConfigDir {
+        package = cfg.package; inherit (cfg) settings; inherit pkgs;
+      };
     in {
       options.services.quickshell-overview = baseOptions { inherit lib; system = pkgs.system; };
       config = lib.mkIf cfg.enable {
-        environment.etc."xdg/quickshell/overview".source = mkConfigDir {
-          package = cfg.package; inherit (cfg) settings; inherit pkgs;
-        };
+        system.activationScripts.quickshell-overview = lib.stringAfter [ "etc" ] ''
+          mkdir -p /etc/xdg/quickshell
+          ln -sfn ${configDir} /etc/xdg/quickshell/overview
+        '';
       };
     };
 

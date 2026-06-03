@@ -9,7 +9,8 @@
     forEachSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
 
     mkConfigDir = { package, settings, pkgs }: if settings != {} then
-       pkgs.runCommand "quickshell-overview" {} ''
+      pkgs.runCommand "quickshell-overview-config" {} ''
+        mkdir -p $out
         cp -r ${package}/share/quickshell/overview/* $out/
         cat > $out/config.json <<'JSONEOF'
         ${builtins.toJSON settings}
@@ -45,6 +46,7 @@
         meta = with pkgs.lib; {
           description = "Standalone workspace overview for Hyprland using Quickshell";
           homepage = "https://github.com/Shanu-Kumawat/quickshell-overview";
+          maintainers = with lib.maintainers; [ fsilly ];
           platforms = platforms.linux;
         };
       };

@@ -5,8 +5,34 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }: let
+  outputs = { self, nixpkgs, config }: let
     forEachSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
+
+    cfg = config.programs.quickshell-overview;
+
+    mkConfigDir = { package, settings, pkgs }: if settings != {} then
+       pkgs.runCommand "quickshell-overview-config" {} ''
+        cp -r ${package}/share/quickshell/overview/* $out/
+        cat > $out/config.json <<'JSONEOF'
+        ${builtins.toJSON settings}
+        JSONEOF
+      ''
+      else
+        "${package}/share/quickshell/overview";
+
+    baseOptions = { lib, system }: with lib; {
+      enable = mkEnableOption "Quickshell Overview";
+      package = mkOption {
+        type = types.package;
+        default = self.packages.${system}.default;
+      };
+      settings = mkOption {
+        type = types.attrs;
+        default = {};
+        description = "Settings serialized to config.json (see config.example.json)";
+      };
+    };
+    
   in {
     packages = forEachSystem (system: let pkgs = import nixpkgs { inherit system; }; in {
       default = pkgs.stdenvNoCC.mkDerivation {
@@ -21,7 +47,6 @@
         meta = with pkgs.lib; {
           description = "Standalone workspace overview for Hyprland using Quickshell";
           homepage = "https://github.com/Shanu-Kumawat/quickshell-overview";
-          license = licenses.gpl3Only;
           platforms = platforms.linux;
         };
       };
@@ -43,64 +68,22 @@
     });
 
     nixosModules.default = { lib, pkgs, config, ... }: let
-      inherit (lib) types mkOption mkIf;
       cfg = config.services.quickshell-overview;
-      configDir = if cfg.settings != {} then
-        pkgs.runCommand "quickshell-overview-config" {} ''
-          cp -r ${cfg.package}/share/quickshell/overview/* $out/
-          cat > $out/config.json <<'JSONEOF'
-          ${builtins.toJSON cfg.settings}
-          JSONEOF
-        ''
-      else
-        "${cfg.package}/share/quickshell/overview";
     in {
-      options.services.quickshell-overview = {
-        enable = lib.mkEnableOption "Quickshell Overview";
-        package = mkOption {
-          type = types.package;
-          default = self.packages.${pkgs.system}.default;
+      options.services.quickshell-overview = baseOptions { inherit lib; system = pkgs.system; };
+      config = lib.mkIf cfg.enable {
+        environment.etc."xdg/quickshell/overview".source = mkConfigDir {
+          package = cfg.package; inherit (cfg) settings; inherit pkgs;
         };
-        settings = mkOption {
-          type = types.attrs;
-          default = {};
-          description = "Settings serialized to config.json (see config.example.json)";
-        };
-      };
-
-      config = mkIf cfg.enable {
-        environment.etc."xdg/quickshell/overview".source = configDir;
       };
     };
 
-    homeManagerModules.default = { lib, pkgs, config, ... }: let
-      inherit (lib) types mkOption mkIf;
-      cfg = config.programs.quickshell-overview;
-      configDir = if cfg.settings != {} then
-        pkgs.runCommand "quickshell-overview-config" {} ''
-          cp -r ${cfg.package}/share/quickshell/overview/* $out/
-          cat > $out/config.json <<'JSONEOF'
-          ${builtins.toJSON cfg.settings}
-          JSONEOF
-        ''
-      else
-        "${cfg.package}/share/quickshell/overview";
-    in {
-      options.programs.quickshell-overview = {
-        enable = lib.mkEnableOption "Quickshell Overview";
-        package = mkOption {
-          type = types.package;
-          default = self.packages.${pkgs.system}.default;
+    homeManagerModules.default = { lib, pkgs, config, ... }: { 
+      options.programs.quickshell-overview = baseOptions { inherit lib; system = pkgs.system; };
+      config = lib.mkIf cfg.enable {
+        xdg.configFile."quickshell/overview".source = mkConfigDir {
+          package = cfg.package; inherit (cfg) settings; inherit pkgs;
         };
-        settings = mkOption {
-          type = types.attrs;
-          default = {};
-          description = "Settings serialized to config.json (see config.example.json)";
-        };
-      };
-
-      config = mkIf cfg.enable {
-        xdg.configFile."quickshell/overview".source = configDir;
       };
     };
   };

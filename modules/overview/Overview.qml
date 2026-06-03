@@ -205,7 +205,11 @@ Scope {
 
                     if (targetId !== null) {
                         const clampedTarget = Math.max(minWorkspaceId, Math.min(maxWorkspaceId, targetId));
-                        Hyprland.dispatch("workspace " + clampedTarget);
+			if (Hyprland.usingLua) {
+				Hyprland.dispatch(`hl.dsp.focus({workspace = '${clampedTarget}'})`);
+			} else {
+				Hyprland.dispatch("workspace " + clampedTarget);
+			}
                         event.accepted = true;
                     }
                 }
@@ -223,6 +227,7 @@ Scope {
 
                 Loader {
                     id: overviewLoader
+                    active: Config?.options.overview.enable ?? true
                     sourceComponent: OverviewWidget {
                         panelWindow: root
                         visible: GlobalStates.overviewOpen && (Config?.options.overview.enable ?? true)

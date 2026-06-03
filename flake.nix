@@ -5,10 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = { self, nixpkgs, config }: let
+  outputs = { self, nixpkgs }: let
     forEachSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
-
-    cfg = config.programs.quickshell-overview;
 
     mkConfigDir = { package, settings, pkgs }: if settings != {} then
        pkgs.runCommand "quickshell-overview-config" {} ''
@@ -78,7 +76,9 @@
       };
     };
 
-    homeManagerModules.default = { lib, pkgs, config, ... }: { 
+    homeManagerModules.default = { lib, pkgs, config, ... }: let
+      cfg = config.programs.quickshell-overview;
+    in { 
       options.programs.quickshell-overview = baseOptions { inherit lib; system = pkgs.system; };
       config = lib.mkIf cfg.enable {
         xdg.configFile."quickshell/overview".source = mkConfigDir {

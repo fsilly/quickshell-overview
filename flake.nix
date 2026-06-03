@@ -9,7 +9,7 @@
     forEachSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
 
     mkConfigDir = { package, settings, pkgs }: if settings != {} then
-       pkgs.runCommand "quickshell-overview-config" {} ''
+       pkgs.runCommand "quickshell-overview" {} ''
         cp -r ${package}/share/quickshell/overview/* $out/
         cat > $out/config.json <<'JSONEOF'
         ${builtins.toJSON settings}

@@ -69,6 +69,7 @@ Item {
         const mode = `${previewModeRaw ?? "live"}`.trim().toLowerCase();
         return (mode === "event" || mode === "snapshot") ? "event" : "live";
     }
+    required property var quickWidgetRevealOnly
     property bool useEventPreviewRefresh: previewsEnabled && previewMode === "event"
 
     readonly property var monitorSpecialWorkspaceNames: {
@@ -568,6 +569,7 @@ Item {
 
                             DropArea {
                                 anchors.fill: parent
+                                visible: !quickWidgetRevealOnly
                                 onEntered: {
                                     root.draggingTargetWorkspace = workspaceValue
                                     root.draggingTargetSpecialWorkspace = ""
@@ -1019,6 +1021,7 @@ Item {
                     id: window
                     required property var modelData
                     required property int index
+                    visible: !quickWidgetRevealOnly
                     property int monitorId: windowData?.monitor
                     property var monitor: HyprlandData.monitors.find(m => m.id === monitorId)
                     property var address: `0x${modelData.HyprlandToplevel.address}`

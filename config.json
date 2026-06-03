@@ -42,8 +42,8 @@
     }
   },
   "overview": {
-    "rows": 3,
-    "columns": 5,
+    "rows": 5,
+    "columns": 6,
     "scale": 0.13,
     "enable": true,
     "hideEmptyRows": false,

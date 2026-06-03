@@ -11,6 +11,7 @@ import "."
 
 Scope {
     id: overviewScope
+    property bool quickWidgetRevealOnly: false
     Variants {
         id: overviewVariants
         model: Quickshell.screens
@@ -222,18 +223,32 @@ Scope {
 
                 Loader {
                     id: overviewLoader
-                    active: GlobalStates.overviewOpen && (Config?.options.overview.enable ?? true)
                     sourceComponent: OverviewWidget {
                         panelWindow: root
-                        visible: true
+                        visible: GlobalStates.overviewOpen && (Config?.options.overview.enable ?? true)
+                        quickWidgetRevealOnly: overviewScope.quickWidgetRevealOnly
                     }
                 }
             }
         }
     }
 
+
+    Timer {
+        id: quickShowExecute;
+        interval: 320;
+        repeat: false;
+        running: false;
+        onTriggered: {
+            ipc.close();
+            overviewScope.quickWidgetRevealOnly = false;
+            quickShowExecute.running = false;
+        }
+    }
+
     IpcHandler {
         target: "overview"
+        id: ipc
 
         function toggle() {
             GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
@@ -243,6 +258,14 @@ Scope {
         }
         function open() {
             GlobalStates.overviewOpen = true;
+        }
+        function quickShow() {
+            if (!quickShowExecute.running && GlobalStates.overviewOpen)
+                return;
+            open();
+            quickShowExecute.restart();
+            overviewScope.quickWidgetRevealOnly = false;
+            quickShowExecute.running = true;
         }
     }
 }
